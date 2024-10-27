@@ -16,20 +16,15 @@
 package io.rekast.sdk.network.api.route
 
 import io.rekast.sdk.Builder
-import io.rekast.sdk.callback.MomoCallback
-import io.rekast.sdk.callback.MomoResponse
-import io.rekast.sdk.callback.TransactionCallback
-import io.rekast.sdk.model.api.AccountBalance
 import io.rekast.sdk.model.api.AccountHolder
-import io.rekast.sdk.model.api.BasicUserInfo
 import io.rekast.sdk.model.api.MomoNotification
 import io.rekast.sdk.model.api.MomoTransaction
-import io.rekast.sdk.model.api.UserInfoWithConsent
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.User
 import io.rekast.sdk.model.authentication.UserKey
 import io.rekast.sdk.repository.Repository
 import okhttp3.ResponseBody
+import retrofit2.Response
 
 /**
  * Prepares the different MOMO API requests
@@ -38,19 +33,25 @@ object Routes {
     lateinit var repository: Repository
     fun builder(apiUserId: String): Builder = Builder(apiUserId)
 
+    suspend fun createApiUser(
+        productSubscriptionKey: String,
+        apiVersion: String,
+        uuid: String
+    ): Response<User> {
+        return repository.createApiUser(productSubscriptionKey, apiVersion, uuid)
+    }
+
     /**
      * Prepares to fetch the API User
      * @param[productSubscriptionKey]  -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[callback] -- The request callback. Returns @see [User]
      */
-    fun checkApiUser(
+    suspend fun checkApiUser(
         productSubscriptionKey: String,
-        apiVersion: String,
-        callback: ((momoResponse: MomoResponse<User>) -> Unit)
-    ) {
-        repository.checkApiUser(productSubscriptionKey, apiVersion)
-            .enqueue(MomoCallback(callback))
+        apiVersion: String
+    ): Response<User> {
+        return repository.checkApiUser(productSubscriptionKey, apiVersion)
     }
 
     /**
@@ -61,11 +62,9 @@ object Routes {
      */
     fun getUserApiKey(
         productSubscriptionKey: String,
-        apiVersion: String,
-        callback: ((momoResponse: MomoResponse<UserKey>) -> Unit)
-    ) {
-        repository.getUserApiKey(productSubscriptionKey, apiVersion)
-            .enqueue(MomoCallback(callback))
+        apiVersion: String
+    ): Response<UserKey> {
+        return repository.getUserApiKey(productSubscriptionKey, apiVersion)
     }
 
     /**
@@ -78,11 +77,9 @@ object Routes {
     fun getAccessToken(
         productSubscriptionKey: String,
         apiKey: String,
-        productType: String,
-        callback: ((momoResponse: MomoResponse<AccessToken>) -> Unit)
-    ) {
-        repository.getAccessToken(productSubscriptionKey, apiKey, productType)
-            .enqueue(MomoCallback(callback))
+        productType: String
+    ): Response<AccessToken> {
+        return repository.getAccessToken(productSubscriptionKey, apiKey, productType)
     }
 
     /**
@@ -101,11 +98,9 @@ object Routes {
         productSubscriptionKey: String,
         accessToken: String,
         apiVersion: String,
-        productType: String,
-        callback: ((momoResponse: MomoResponse<AccountBalance>) -> Unit)
+        productType: String
     ) {
         repository.getAccountBalance(currency, productSubscriptionKey, accessToken, apiVersion, productType)
-            .enqueue(MomoCallback(callback))
     }
 
     /**
@@ -122,8 +117,7 @@ object Routes {
         productSubscriptionKey: String,
         accessToken: String,
         apiVersion: String,
-        productType: String,
-        callback: ((momoResponse: MomoResponse<BasicUserInfo>) -> Unit)
+        productType: String
     ) {
         repository.getBasicUserInfo(
             accountHolder,
@@ -131,7 +125,7 @@ object Routes {
             accessToken,
             apiVersion,
             productType
-        ).enqueue(MomoCallback(callback))
+        )
     }
 
     /**
@@ -147,15 +141,14 @@ object Routes {
         productSubscriptionKey: String,
         accessToken: String,
         apiVersion: String,
-        productType: String,
-        callback: ((momoResponse: MomoResponse<UserInfoWithConsent>) -> Unit)
+        productType: String
     ) {
         repository.getUserInfoWithConsent(
             productSubscriptionKey,
             accessToken,
             apiVersion,
             productType
-        ).enqueue(MomoCallback(callback))
+        )
     }
 
     /**
@@ -174,8 +167,7 @@ object Routes {
         apiVersion: String,
         productType: String,
         productSubscriptionKey: String,
-        uuid: String,
-        callback: ((momoResponse: MomoResponse<Unit>) -> Unit)
+        uuid: String
     ) {
         repository.transfer(
             accessToken,
@@ -184,7 +176,7 @@ object Routes {
             productType,
             productSubscriptionKey,
             uuid
-        ).enqueue(MomoCallback(callback))
+        )
     }
 
     /**
@@ -201,8 +193,7 @@ object Routes {
         apiVersion: String,
         productType: String,
         productSubscriptionKey: String,
-        accessToken: String,
-        callback: ((momoResponse: MomoResponse<ResponseBody?>) -> Unit)
+        accessToken: String
     ) {
         repository.getTransferStatus(
             referenceId,
@@ -210,7 +201,7 @@ object Routes {
             productType,
             productSubscriptionKey,
             accessToken
-        ).enqueue(TransactionCallback(callback))
+        )
     }
 
     /**
@@ -229,8 +220,7 @@ object Routes {
         apiVersion: String,
         productType: String,
         productSubscriptionKey: String,
-        accessToken: String,
-        callback: ((momoResponse: MomoResponse<ResponseBody?>) -> Unit)
+        accessToken: String
     ) {
         repository.requestToPayDeliveryNotification(
             momoNotification,
@@ -239,7 +229,7 @@ object Routes {
             productType,
             productSubscriptionKey,
             accessToken
-        ).enqueue(MomoCallback(callback))
+        )
     }
 
     /**
@@ -257,8 +247,7 @@ object Routes {
         apiVersion: String,
         productType: String,
         productSubscriptionKey: String,
-        accessToken: String,
-        callback: ((momoResponse: MomoResponse<ResponseBody?>) -> Unit)
+        accessToken: String
     ) {
         repository.validateAccountHolderStatus(
             accountHolder,
@@ -266,7 +255,7 @@ object Routes {
             productType,
             productSubscriptionKey,
             accessToken
-        ).enqueue(MomoCallback(callback))
+        )
     }
 
     /**
@@ -283,8 +272,7 @@ object Routes {
         momoTransaction: MomoTransaction,
         apiVersion: String,
         productSubscriptionKey: String,
-        uuid: String,
-        callback: ((momoResponse: MomoResponse<Unit>) -> Unit)
+        uuid: String
     ) {
         repository.requestToPay(
             accessToken,
@@ -292,7 +280,7 @@ object Routes {
             apiVersion,
             productSubscriptionKey,
             uuid
-        ).enqueue(MomoCallback(callback))
+        )
     }
 
     /**
@@ -307,15 +295,14 @@ object Routes {
         referenceId: String,
         apiVersion: String,
         productSubscriptionKey: String,
-        accessToken: String,
-        callback: ((momoResponse: MomoResponse<ResponseBody?>) -> Unit)
+        accessToken: String
     ) {
         repository.requestToPayTransactionStatus(
             referenceId,
             apiVersion,
             productSubscriptionKey,
             accessToken
-        ).enqueue(TransactionCallback(callback))
+        )
     }
 
     /**
@@ -332,8 +319,7 @@ object Routes {
         momoTransaction: MomoTransaction,
         apiVersion: String,
         productSubscriptionKey: String,
-        uuid: String,
-        callback: ((momoResponse: MomoResponse<Unit>) -> Unit)
+        uuid: String
     ) {
         repository.requestToWithdraw(
             accessToken,
@@ -341,7 +327,7 @@ object Routes {
             apiVersion,
             productSubscriptionKey,
             uuid
-        ).enqueue(MomoCallback(callback))
+        )
     }
 
     /**
@@ -356,15 +342,14 @@ object Routes {
         referenceId: String,
         apiVersion: String,
         productSubscriptionKey: String,
-        accessToken: String,
-        callback: ((momoResponse: MomoResponse<ResponseBody?>) -> Unit)
+        accessToken: String
     ) {
         repository.requestToWithdrawTransactionStatus(
             referenceId,
             apiVersion,
             productSubscriptionKey,
             accessToken
-        ).enqueue(TransactionCallback(callback))
+        )
     }
 
     /**
@@ -381,8 +366,7 @@ object Routes {
         transaction: MomoTransaction,
         apiVersion: String,
         productSubscriptionKey: String,
-        uuid: String,
-        callback: ((momoResponse: MomoResponse<Unit>) -> Unit)
+        uuid: String
     ) {
         repository.deposit(
             accessToken,
@@ -390,7 +374,7 @@ object Routes {
             apiVersion,
             productSubscriptionKey,
             uuid
-        ).enqueue(MomoCallback(callback))
+        )
     }
 
     /**
@@ -405,15 +389,14 @@ object Routes {
         referenceId: String,
         apiVersion: String,
         productSubscriptionKey: String,
-        accessToken: String,
-        callback: ((momoResponse: MomoResponse<ResponseBody?>) -> Unit)
+        accessToken: String
     ) {
         repository.getDepositStatus(
             referenceId,
             apiVersion,
             productSubscriptionKey,
             accessToken
-        ).enqueue(TransactionCallback(callback))
+        )
     }
 
     /**
@@ -430,8 +413,7 @@ object Routes {
         transaction: MomoTransaction,
         apiVersion: String,
         productSubscriptionKey: String,
-        uuid: String,
-        callback: ((momoResponse: MomoResponse<Unit>) -> Unit)
+        uuid: String
     ) {
         repository.refund(
             accessToken,
@@ -439,7 +421,7 @@ object Routes {
             apiVersion,
             productSubscriptionKey,
             uuid
-        ).enqueue(MomoCallback(callback))
+        )
     }
 
     /**
@@ -454,14 +436,13 @@ object Routes {
         referenceId: String,
         apiVersion: String,
         productSubscriptionKey: String,
-        accessToken: String,
-        callback: ((momoResponse: MomoResponse<ResponseBody?>) -> Unit)
+        accessToken: String
     ) {
         repository.getRefundStatus(
             referenceId,
             apiVersion,
             productSubscriptionKey,
             accessToken
-        ).enqueue(TransactionCallback(callback))
+        )
     }
 }

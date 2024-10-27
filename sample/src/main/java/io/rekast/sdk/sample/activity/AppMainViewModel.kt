@@ -18,10 +18,8 @@ package io.rekast.sdk.sample.activity
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import io.io.rekast.momoapi.utils.Settings
 import io.rekast.sdk.BuildConfig
-import io.rekast.sdk.callback.MomoResponse
 import io.rekast.sdk.model.api.MomoTransaction
 import io.rekast.sdk.network.api.route.Routes
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
@@ -47,23 +45,129 @@ class AppMainViewModel : ViewModel() {
 
     fun checkUser() {
         viewModelScope.launch {
-            routes?.checkApiUser(
+            val user = routes?.checkApiUser(
                 Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
                 BuildConfig.MOMO_API_VERSION_V1
-            ) { momoAPIResult ->
-                when (momoAPIResult) {
-                    is MomoResponse.Success -> {
-                        getApiKey()
-                    }
-                    is MomoResponse.Failure -> {
-                        val momoAPIException = momoAPIResult.momoException!!
-                    }
+            )
+
+            if (user?.isSuccessful == true) {
+                getApiKey()
+            } else {
+                Timber.e(user?.errorBody()?.string())
+                val createdUser = routes?.createApiUser(
+                    Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                    BuildConfig.MOMO_API_VERSION_V1,
+                    BuildConfig.MOMO_API_USER_ID
+                )
+                if (createdUser?.isSuccessful == true) {
+                    checkUser()
+                } else {
+                    Timber.e("User was not created")
                 }
             }
         }
     }
 
     private fun getApiKey() {
+        viewModelScope.launch {
+            val apiUserKey = context?.let { Utils.getApiKey(it) }
+            if (StringUtils.isNotBlank(apiUserKey)) {
+                getAccessToken()
+            } else {
+                val userApiKey = routes?.getUserApiKey(
+                    Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                    BuildConfig.MOMO_API_VERSION_V1
+                )
+
+                if (userApiKey?.isSuccessful == true) {
+                    context?.let { Utils.saveApiKey(it, userApiKey.body()?.apiKey.toString()) }
+                    Timber.d("Api Key fetched nad saved successfully")
+                    getAccessToken()
+                } else {
+                    Timber.e("Api Key creation failed %s", userApiKey?.errorBody()?.string())
+                }
+            }
+        }
+    }
+
+    private fun getAccessToken() {
+        viewModelScope.launch {
+            val apiUserKey = context?.let { Utils.getApiKey(it) }
+            val accessToken = context?.let { Utils.getAccessToken(it) }
+            if (StringUtils.isNotBlank(apiUserKey) && StringUtils.isBlank(accessToken)) {
+                apiUserKey?.let { apiKey ->
+                    val accessToken = routes?.getAccessToken(
+                        Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                        apiKey,
+                        ProductType.REMITTANCE.productType
+                    )
+
+                    if (accessToken?.isSuccessful == true) {
+                        context?.let { activityContext ->
+                            Utils.saveAccessToken(
+                                activityContext,
+                                accessToken.body()
+                            )
+                        }
+                        Timber.d("Access token created nad saved successfully")
+                    } else {
+                        Timber.e("Access token creation failed %s", accessToken?.errorBody()?.string())
+                    }
+                }
+            } else {
+                Timber.d("A valid access token exists")
+            }
+        }
+    }
+
+/*    private fun getBasicUserInfo() {
+        val accessToken = Utils.getAccessToken(this)
+        if (StringUtils.isNotBlank(accessToken)) {
+            momoAPI.getBasicUserInfo(
+                "46733123459",
+                Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                accessToken,
+                BuildConfig.MOMO_API_VERSION_V1,
+                Constants.ProductTypes.REMITTANCE,
+            ) { momoAPIResult ->
+                when (momoAPIResult) {
+                    is MomoResponse.Success -> {
+                        val basicInfo = momoAPIResult.value
+                        Timber.d(basicInfo.toString())
+                    }
+                    is MomoResponse.Failure -> {
+                        val momoAPIException = momoAPIResult.APIException
+                        toast(momoAPIException?.message ?: "An error occurred!")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getUserInfoWithConsent() {
+        val accessToken = Utils.getAccessToken(this)
+        if (StringUtils.isNotBlank(accessToken)) {
+            momoAPI.getUserInfoWithConsent(
+                Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                accessToken,
+                BuildConfig.MOMO_API_VERSION_V1,
+                Constants.ProductTypes.REMITTANCE,
+            ) { momoAPIResult ->
+                when (momoAPIResult) {
+                    is MomoResponse.Success -> {
+                        val getUserInfoWithoutConsent = momoAPIResult.value
+                        Timber.d(getUserInfoWithoutConsent.toString())
+                    }
+                    is MomoResponse.Failure -> {
+                        val momoAPIException = momoAPIResult.APIException
+                        toast(momoAPIException?.message ?: "An error occurred!")
+                    }
+                }
+            }
+        }
+    }*/
+
+/*    private fun getApiKey() {
         viewModelScope.launch {
             val apiUserKey = context?.let { Utils.getApiKey(it) }
             if (StringUtils.isNotBlank(apiUserKey)) {
@@ -169,7 +273,7 @@ class AppMainViewModel : ViewModel() {
                 }
             }
         }
-    }
+    }*/
 
     private fun createRefundTransaction(requestToPayUuid: String): MomoTransaction {
         return MomoTransaction(
@@ -198,55 +302,4 @@ class AppMainViewModel : ViewModel() {
     private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
         viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }
     }
-
-/*
-
-    private fun getBasicUserInfo() {
-        val accessToken = Utils.getAccessToken(this)
-        if (StringUtils.isNotBlank(accessToken)) {
-            momoAPI.getBasicUserInfo(
-                "46733123459",
-                Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
-                accessToken,
-                BuildConfig.MOMO_API_VERSION_V1,
-                Constants.ProductTypes.REMITTANCE,
-            ) { momoAPIResult ->
-                when (momoAPIResult) {
-                    is MomoResponse.Success -> {
-                        val basicInfo = momoAPIResult.value
-                        Timber.d(basicInfo.toString())
-                    }
-                    is MomoResponse.Failure -> {
-                        val momoAPIException = momoAPIResult.APIException
-                        toast(momoAPIException?.message ?: "An error occurred!")
-                    }
-                }
-            }
-        }
-    }
-
-    private fun getUserInfoWithConsent() {
-        val accessToken = Utils.getAccessToken(this)
-        if (StringUtils.isNotBlank(accessToken)) {
-            momoAPI.getUserInfoWithConsent(
-                Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
-                accessToken,
-                BuildConfig.MOMO_API_VERSION_V1,
-                Constants.ProductTypes.REMITTANCE,
-            ) { momoAPIResult ->
-                when (momoAPIResult) {
-                    is MomoResponse.Success -> {
-                        val getUserInfoWithoutConsent = momoAPIResult.value
-                        Timber.d(getUserInfoWithoutConsent.toString())
-                    }
-                    is MomoResponse.Failure -> {
-                        val momoAPIException = momoAPIResult.APIException
-                        toast(momoAPIException?.message ?: "An error occurred!")
-                    }
-                }
-            }
-        }
-    }
-
-*/
 }

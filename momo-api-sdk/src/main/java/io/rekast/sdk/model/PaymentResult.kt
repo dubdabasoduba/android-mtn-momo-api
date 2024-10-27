@@ -19,9 +19,9 @@ package io.rekast.sdk.model
  * Data class for Payment MomoResponse.
  */
 data class PaymentResult(
-    var MerchantRequestID: String,
-    var CheckoutRequestID: String,
-    var ResponseCode: String,
-    var ResponseDescription: String,
-    var CustomerMessage: String
+    var merchantRequestID: String,
+    var checkoutRequestID: String,
+    var responseCode: String,
+    var responseDescription: String,
+    var customerMessage: String
 )

@@ -37,12 +37,12 @@ class Builder(private var apiUserId: String) {
     }
 
     fun build(): Routes {
-        val momoApi = Routes
-        momoApi.repository = Repository(
+        val routes = Routes
+        routes.repository = Repository(
             apiUserId,
             baseURL,
             environment
         )
-        return momoApi
+        return routes
     }
 }

@@ -23,6 +23,6 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class User(
-    @SerializedName("providerCallbackHost") val providerCallbackHost: String,
-    @SerializedName("targetEnvironment") val targetEnvironment: String
+    @SerializedName("providerCallbackHost") val providerCallbackHost: String? = null,
+    @SerializedName("targetEnvironment") val targetEnvironment: String? = null
 )

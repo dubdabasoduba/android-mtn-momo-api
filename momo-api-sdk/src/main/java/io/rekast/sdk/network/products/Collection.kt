@@ -18,7 +18,7 @@ package io.rekast.sdk.network.products
 import io.rekast.sdk.model.api.MomoTransaction
 import io.rekast.sdk.utils.MomoConstants
 import okhttp3.ResponseBody
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -45,7 +45,7 @@ sealed interface Collection : Common {
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String,
         @Header(MomoConstants.Headers.X_REFERENCE_ID) uuid: String
-    ): Call<Unit>
+    ): Response<Unit>
 
     /**
      * Makes a request to check the status of the payment request
@@ -62,7 +62,7 @@ sealed interface Collection : Common {
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Call<ResponseBody>
+    ): Response<ResponseBody>
 
     /**
      * Makes a request to withdraw from a specific user
@@ -79,7 +79,7 @@ sealed interface Collection : Common {
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String,
         @Header(MomoConstants.Headers.X_REFERENCE_ID) uuid: String
-    ): Call<Unit>
+    ): Response<Unit>
 
     /**
      * Makes a request to check the status fo the withdrawal
@@ -96,5 +96,5 @@ sealed interface Collection : Common {
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Call<ResponseBody>
+    ): Response<ResponseBody>
 }

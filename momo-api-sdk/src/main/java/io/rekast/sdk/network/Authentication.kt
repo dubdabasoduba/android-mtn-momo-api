@@ -19,7 +19,7 @@ import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.User
 import io.rekast.sdk.model.authentication.UserKey
 import io.rekast.sdk.utils.MomoConstants
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -30,6 +30,14 @@ import retrofit2.http.Path
  * This interface defines the method, the request and response from the API.
  */
 sealed interface Authentication {
+
+    @POST(MomoConstants.EndPoints.CREATE_API_USER)
+    suspend fun createApiUser(
+        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(MomoConstants.Headers.X_REFERENCE_ID) uuid: String,
+        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
+    ): Response<User>
+
     /**
      * Makes a request to get the API User. Used to confirm whether the API User provided exists
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
@@ -38,11 +46,11 @@ sealed interface Authentication {
      * @return[User] -- Returns the API User if available
      */
     @GET(MomoConstants.EndPoints.GET_API_USER)
-    fun getApiUser(
+    suspend fun getApiUser(
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Path(MomoConstants.EndpointPaths.API_USER) apiUser: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
-    ): Call<User>
+    ): Response<User>
 
     /**
      * Makes a request to get the API Key.
@@ -56,7 +64,7 @@ sealed interface Authentication {
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Path(MomoConstants.EndpointPaths.API_USER) apiUser: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
-    ): Call<UserKey>
+    ): Response<UserKey>
 
     /**
      * Makes a request to get the Access Token
@@ -68,5 +76,5 @@ sealed interface Authentication {
     fun getAccessToken(
         @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
-    ): Call<AccessToken>
+    ): Response<AccessToken>
 }

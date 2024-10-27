@@ -24,8 +24,10 @@ import io.rekast.sdk.sample.R
 @Composable
 fun textFieldDefaultsComponent(): TextFieldColors {
     return TextFieldDefaults.colors(
-        focusedContainerColor = colorResource(id = R.color.accent_primary),
-        unfocusedContainerColor = colorResource(id = R.color.black),
+        focusedIndicatorColor = colorResource(id = R.color.accent_primary),
+        unfocusedIndicatorColor = colorResource(id = R.color.black),
+        focusedContainerColor = colorResource(id = R.color.white),
+        unfocusedContainerColor = colorResource(id = R.color.whiteish),
         cursorColor = colorResource(id = R.color.accent_primary)
     )
 }

@@ -22,7 +22,7 @@ import io.rekast.sdk.model.api.MomoTransaction
 import io.rekast.sdk.model.api.UserInfoWithConsent
 import io.rekast.sdk.utils.MomoConstants
 import okhttp3.ResponseBody
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -48,7 +48,7 @@ sealed interface Common {
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Call<AccountBalance>
+    ): Response<AccountBalance>
 
     /**
      * Makes a request to get the Basic User Info
@@ -65,7 +65,7 @@ sealed interface Common {
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Call<BasicUserInfo>
+    ): Response<BasicUserInfo>
 
     /**
      * Makes a request to get the User Info with Consent
@@ -81,7 +81,7 @@ sealed interface Common {
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Call<UserInfoWithConsent>
+    ): Response<UserInfoWithConsent>
 
     /**
      * Makes a request to get the User Info with Consent
@@ -100,7 +100,7 @@ sealed interface Common {
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String,
         @Header(MomoConstants.Headers.X_REFERENCE_ID) uuid: String
-    ): Call<Unit>
+    ): Response<Unit>
 
     /**
      * Makes a request to get the User Info with Consent
@@ -119,7 +119,7 @@ sealed interface Common {
         @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Call<ResponseBody>
+    ): Response<ResponseBody>
 
     /**
      * Makes a request to send the delivery notification
@@ -143,7 +143,7 @@ sealed interface Common {
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String,
         @Header(MomoConstants.Headers.NOTIFICATION_MESSAGE) notificationMessage: String
-    ): Call<ResponseBody>
+    ): Response<ResponseBody>
 
     /**
      * Makes a request to check the account holder status
@@ -163,7 +163,7 @@ sealed interface Common {
         @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Call<ResponseBody>
+    ): Response<ResponseBody>
 
     /**
      * Makes a request to get the Account Balance with a currency.
@@ -181,5 +181,5 @@ sealed interface Common {
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Call<AccountBalance>
+    ): Response<AccountBalance>
 }

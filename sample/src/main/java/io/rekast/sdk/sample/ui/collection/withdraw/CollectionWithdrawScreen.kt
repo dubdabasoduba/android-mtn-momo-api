@@ -105,7 +105,7 @@ fun CollectionScreen(
                             paymentMessage = paymentMessage,
                             paymentNote = paymentNote,
                             deliveryNote = deliveryNote,
-                            onRequestPayButtonClicked = { collectionWithdrawScreenViewModel.requestToWithdraw() },
+                            onRequestPayButtonClicked = { /*collectionWithdrawScreenViewModel.requestToWithdraw()*/ },
                             onPhoneNumberUpdated = { collectionWithdrawScreenViewModel.onPhoneNumberUpdated(it) },
                             onFinancialIdUpdated = { collectionWithdrawScreenViewModel.onFinancialIdUpdated(it) },
                             onReferenceIdToRefundUpdated = { collectionWithdrawScreenViewModel.onReferenceIdToRefundUpdated(it) },

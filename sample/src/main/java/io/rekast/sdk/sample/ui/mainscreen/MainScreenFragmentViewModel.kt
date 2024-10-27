@@ -19,26 +19,15 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
-import io.io.rekast.momoapi.utils.Settings
-import io.rekast.sdk.callback.MomoResponse
 import io.rekast.sdk.model.api.AccountBalance
-import io.rekast.sdk.model.api.AccountHolder
 import io.rekast.sdk.model.api.AccountHolderStatus
 import io.rekast.sdk.model.api.BasicUserInfo
 import io.rekast.sdk.network.api.route.Routes
-import io.rekast.sdk.sample.BuildConfig
-import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
-import io.rekast.sdk.sample.utils.Utils
-import io.rekast.sdk.utils.AccountHolderType
-import io.rekast.sdk.utils.ProductType
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import org.apache.commons.lang3.StringUtils
-import timber.log.Timber
 
 class MainScreenFragmentViewModel : ViewModel() {
     var context: Context? = null
@@ -50,7 +39,7 @@ class MainScreenFragmentViewModel : ViewModel() {
     var _accountHolderStatus: MutableLiveData<AccountHolderStatus?> = MutableLiveData(null)
     var _accountBalance: MutableLiveData<AccountBalance?> = MutableLiveData(null)
 
-    fun getBasicUserInfo() {
+/*    fun getBasicUserInfo() {
         showProgressBar.postValue(true)
         val accessToken = context?.let { Utils.getAccessToken(it) }
         if (StringUtils.isNotBlank(accessToken)) {
@@ -199,7 +188,7 @@ class MainScreenFragmentViewModel : ViewModel() {
                 )
             )
         }
-    }
+    }*/
 
     fun provideContext(fragmentContext: Context) {
         context = fragmentContext

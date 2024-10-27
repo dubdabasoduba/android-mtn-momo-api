@@ -29,7 +29,7 @@ import io.rekast.sdk.network.okhttp.AccessTokenInterceptor
 import io.rekast.sdk.network.okhttp.BasicAuthInterceptor
 import okhttp3.ResponseBody
 import org.apache.commons.lang3.StringUtils
-import retrofit2.Call
+import retrofit2.Response
 
 /**
  * The BaseRepository Class. Responsible for making the actual network call to the MOMO APIs.
@@ -40,13 +40,22 @@ class Repository(
     var baseUrl: String,
     var environment: String
 ) {
+
+    suspend fun createApiUser(
+        productSubscriptionKey: String,
+        apiVersion: String,
+        uuid: String
+    ): Response<User> {
+        return Clients().getAuthentication(baseUrl, null).createApiUser(apiVersion, uuid, productSubscriptionKey)
+    }
+
     /**
      * Check whether the supplied user exists
      */
-    fun checkApiUser(
+    suspend fun checkApiUser(
         productSubscriptionKey: String,
         apiVersion: String
-    ): Call<User> {
+    ): Response<User> {
         return Clients().getAuthentication(baseUrl, null)
             .getApiUser(apiVersion, apiUserId, productSubscriptionKey)
     }
@@ -57,7 +66,7 @@ class Repository(
     fun getUserApiKey(
         productSubscriptionKey: String,
         apiVersion: String
-    ): Call<UserKey> {
+    ): Response<UserKey> {
         return Clients().getAuthentication(baseUrl, null)
             .getApiUserKey(apiVersion, apiUserId, productSubscriptionKey)
     }
@@ -69,7 +78,7 @@ class Repository(
         productSubscriptionKey: String,
         apiKey: String,
         productType: String
-    ): Call<AccessToken> {
+    ): Response<AccessToken> {
         return Clients().getAuthentication(
             baseUrl,
             BasicAuthInterceptor(apiUserId, apiKey)
@@ -85,7 +94,7 @@ class Repository(
         accessToken: String,
         apiVersion: String,
         productType: String
-    ): Call<AccountBalance> {
+    ): Response<AccountBalance> {
         return if (StringUtils.isNotBlank(currency)) {
             Clients().getCommon(
                 baseUrl,
@@ -114,7 +123,7 @@ class Repository(
         accessToken: String,
         apiVersion: String,
         productType: String
-    ): Call<BasicUserInfo> {
+    ): Response<BasicUserInfo> {
         return Clients().getCommon(
             baseUrl,
             AccessTokenInterceptor(accessToken)
@@ -129,7 +138,7 @@ class Repository(
         accessToken: String,
         apiVersion: String,
         productType: String
-    ): Call<UserInfoWithConsent> {
+    ): Response<UserInfoWithConsent> {
         return Clients().getCommon(
             baseUrl,
             AccessTokenInterceptor(accessToken)
@@ -146,7 +155,7 @@ class Repository(
         productType: String,
         productSubscriptionKey: String,
         uuid: String
-    ): Call<Unit> {
+    ): Response<Unit> {
         return Clients().getCommon(
             baseUrl,
             AccessTokenInterceptor(accessToken)
@@ -162,7 +171,7 @@ class Repository(
         productType: String,
         productSubscriptionKey: String,
         accessToken: String
-    ): Call<ResponseBody> {
+    ): Response<ResponseBody> {
         return Clients().getCommon(
             baseUrl,
             AccessTokenInterceptor(accessToken)
@@ -179,7 +188,7 @@ class Repository(
         productType: String,
         productSubscriptionKey: String,
         accessToken: String
-    ): Call<ResponseBody> {
+    ): Response<ResponseBody> {
         return Clients().getCommon(
             baseUrl,
             AccessTokenInterceptor(accessToken)
@@ -203,7 +212,7 @@ class Repository(
         productType: String,
         productSubscriptionKey: String,
         accessToken: String
-    ): Call<ResponseBody> {
+    ): Response<ResponseBody> {
         return Clients().getCommon(
             baseUrl,
             AccessTokenInterceptor(accessToken)
@@ -223,7 +232,7 @@ class Repository(
         apiVersion: String,
         productSubscriptionKey: String,
         uuid: String
-    ): Call<Unit> {
+    ): Response<Unit> {
         return Clients().getCollection(
             baseUrl,
             AccessTokenInterceptor(accessToken)
@@ -235,7 +244,7 @@ class Repository(
         apiVersion: String,
         productSubscriptionKey: String,
         accessToken: String
-    ): Call<ResponseBody> {
+    ): Response<ResponseBody> {
         return Clients().getCollection(
             baseUrl,
             AccessTokenInterceptor(accessToken)
@@ -248,7 +257,7 @@ class Repository(
         apiVersion: String,
         productSubscriptionKey: String,
         uuid: String
-    ): Call<Unit> {
+    ): Response<Unit> {
         return Clients().getCollection(
             baseUrl,
             AccessTokenInterceptor(accessToken)
@@ -260,7 +269,7 @@ class Repository(
         apiVersion: String,
         productSubscriptionKey: String,
         accessToken: String
-    ): Call<ResponseBody> {
+    ): Response<ResponseBody> {
         return Clients().getCollection(
             baseUrl,
             AccessTokenInterceptor(accessToken)
@@ -273,7 +282,7 @@ class Repository(
         apiVersion: String,
         productSubscriptionKey: String,
         uuid: String
-    ): Call<Unit> {
+    ): Response<Unit> {
         return Clients().getDisbursement(
             baseUrl,
             AccessTokenInterceptor(accessToken)
@@ -285,7 +294,7 @@ class Repository(
         apiVersion: String,
         productSubscriptionKey: String,
         accessToken: String
-    ): Call<ResponseBody> {
+    ): Response<ResponseBody> {
         return Clients().getDisbursement(
             baseUrl,
             AccessTokenInterceptor(accessToken)
@@ -298,7 +307,7 @@ class Repository(
         apiVersion: String,
         productSubscriptionKey: String,
         uuid: String
-    ): Call<Unit> {
+    ): Response<Unit> {
         return Clients().getDisbursement(
             baseUrl,
             AccessTokenInterceptor(accessToken)
@@ -310,7 +319,7 @@ class Repository(
         apiVersion: String,
         productSubscriptionKey: String,
         accessToken: String
-    ): Call<ResponseBody> {
+    ): Response<ResponseBody> {
         return Clients().getDisbursement(
             baseUrl,
             AccessTokenInterceptor(accessToken)

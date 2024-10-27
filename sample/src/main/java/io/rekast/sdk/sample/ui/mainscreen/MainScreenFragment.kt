@@ -68,8 +68,8 @@ class MainScreenFragment : Fragment() {
 
         mainScreenFragmentViewModel.provideContext(activity)
         mainScreenFragmentViewModel.provideMomoAPI(fragmentMomoAPI)
-        mainScreenFragmentViewModel.getBasicUserInfo()
-        mainScreenFragmentViewModel.validateAccountHolderStatus()
+        // mainScreenFragmentViewModel.getBasicUserInfo()
+        // mainScreenFragmentViewModel.validateAccountHolderStatus()
         // mainScreenFragmentViewModel.getAccountBalance()
     }
 }

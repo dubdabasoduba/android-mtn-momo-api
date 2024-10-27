@@ -20,26 +20,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
-import io.io.rekast.momoapi.utils.Settings
-import io.rekast.sdk.callback.MomoResponse
-import io.rekast.sdk.model.api.AccountHolder
-import io.rekast.sdk.model.api.MomoNotification
 import io.rekast.sdk.model.api.MomoTransaction
 import io.rekast.sdk.network.api.route.Routes
-import io.rekast.sdk.sample.BuildConfig
 import io.rekast.sdk.sample.activity.AppMainViewModel
 import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
-import io.rekast.sdk.sample.utils.Utils
-import io.rekast.sdk.utils.AccountHolderType
-import io.rekast.sdk.utils.ProductType
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import org.apache.commons.lang3.RandomStringUtils
-import org.apache.commons.lang3.StringUtils
 
 class DisbursementRefundScreenViewModel : ViewModel() {
     var context: Context? = null
@@ -105,7 +94,7 @@ class DisbursementRefundScreenViewModel : ViewModel() {
         _referenceIdToRefund.value = deliveryNote
     }
 
-    fun refund() {
+/*    fun refund() {
         showProgressBar.postValue(true)
         if (phoneNumber.value!!.isNotEmpty() && referenceIdToRefund.value!!.isNotEmpty() &&
             amount.value!!.isNotEmpty() && paymentMessage.value!!.isNotEmpty() &&
@@ -267,7 +256,7 @@ class DisbursementRefundScreenViewModel : ViewModel() {
                 )
             )
         }
-    }
+    }*/
 
     fun provideContext(fragmentContext: Context) {
         context = fragmentContext

@@ -105,7 +105,7 @@ fun RemittanceScreen(
                             paymentMessage = paymentMessage,
                             paymentNote = paymentNote,
                             deliveryNote = deliveryNote,
-                            onRequestPayButtonClicked = { remittanceScreenViewModel.transferRemittance() },
+                            onRequestPayButtonClicked = { /*remittanceScreenViewModel.transferRemittance()*/ },
                             onPhoneNumberUpdated = { remittanceScreenViewModel.onPhoneNumberUpdated(it) },
                             onFinancialIdUpdated = { remittanceScreenViewModel.onFinancialIdUpdated(it) },
                             onReferenceIdToRefundUpdated = { remittanceScreenViewModel.onReferenceIdToRefundUpdated(it) },

@@ -45,6 +45,7 @@ object MomoConstants {
     }
 
     object EndPoints {
+        const val CREATE_API_USER = "/{apiVersion}/apiuser"
         const val GET_API_USER = "/{apiVersion}/apiuser/{apiUser}"
         const val GET_API_USER_KEY = "/{apiVersion}/apiuser/{apiUser}/apikey"
         const val GET_ACCESS_TOKEN = "/{productType}/token/"

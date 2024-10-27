@@ -37,8 +37,8 @@ object Utils {
         return mSettings.getString("apiKey", "").toString()
     }
 
-    fun saveAccessToken(context: Context, accessToken: AccessToken) {
-        val tokenExpiry = if (StringUtils.isNotBlank(accessToken.expiresIn)) {
+    fun saveAccessToken(context: Context, accessToken: AccessToken?) {
+        val tokenExpiry = if (StringUtils.isNotBlank(accessToken!!.expiresIn)) {
             accessToken.expiresIn.toIntOrNull()
         } else { 1 }
         val cal = Calendar.getInstance()
