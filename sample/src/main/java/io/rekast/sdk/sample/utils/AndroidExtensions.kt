@@ -22,12 +22,12 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarResult
+import androidx.compose.ui.graphics.Color as ComposeColor
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
-import androidx.compose.ui.graphics.Color as ComposeColor
 
 /**
  * Parse this [String] to a color code to be used in compose. Color code must either a). begin with

@@ -120,8 +120,7 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
 
     implementation(libs.google.dagger.hilt)
-    //implementation(libs.androidx.hilt.work)
-    kapt(libs.androidx.hilt.compiler)
+    implementation(libs.androidx.hilt.work)
     kapt(libs.hilt.android.compiler)
 
     implementation(libs.androidx.constraintlayout)
@@ -138,7 +137,7 @@ dependencies {
     implementation(libs.jakewharton.timber)
     implementation(libs.apache.commons.lang3)
 
-    debugImplementation(libs.squareup.leakcanary)
+    debugImplementation(libs.chuckerteam.chucker)
 
     // Testing dependencies
     androidTestImplementation(libs.androidx.test.espresso.core)
@@ -167,4 +166,6 @@ dependencies {
     kaptAndroidTest(libs.hilt.android.compiler)
     // testImplementation(libs.google.dagger.hilt.android.testing)
     kaptTest(libs.hilt.android.compiler)
+
+    releaseImplementation(libs.chuckerteam.chucker.noop)
 }

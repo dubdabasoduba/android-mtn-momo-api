@@ -18,11 +18,11 @@ package io.rekast.sdk.utils
 import com.google.gson.Gson
 import io.rekast.sdk.BuildConfig
 import io.rekast.sdk.model.api.MomoTransaction
+import java.util.*
+import javax.inject.Inject
 import okhttp3.ResponseBody
 import org.apache.commons.lang3.StringUtils
 import retrofit2.Response
-import java.util.*
-import javax.inject.Inject
 
 /**
  * Contains General Settings() used in the library.

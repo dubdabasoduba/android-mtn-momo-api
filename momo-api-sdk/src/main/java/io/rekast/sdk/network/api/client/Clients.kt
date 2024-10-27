@@ -26,13 +26,13 @@ import io.rekast.sdk.network.service.products.Common
 import io.rekast.sdk.network.service.products.Disbursements
 import io.rekast.sdk.network.service.products.MomoCollection
 import io.rekast.sdk.utils.Settings
+import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
 
 /**
  * Provides an instance of retrofit to all classes that need it.

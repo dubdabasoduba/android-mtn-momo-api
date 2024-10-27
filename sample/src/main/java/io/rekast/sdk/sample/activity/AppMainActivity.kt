@@ -26,8 +26,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.network.api.route.Routes
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.utils.DefaultDispatcherProvider
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 @ExperimentalMaterialApi

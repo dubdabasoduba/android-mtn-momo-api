@@ -16,12 +16,12 @@
 package io.rekast.sdk.network.okhttp
 
 import android.annotation.SuppressLint
-import okhttp3.OkHttpClient
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
+import okhttp3.OkHttpClient
 
 /**
  * This class allows Retrofit to accept any, even bad SSL Certificates.

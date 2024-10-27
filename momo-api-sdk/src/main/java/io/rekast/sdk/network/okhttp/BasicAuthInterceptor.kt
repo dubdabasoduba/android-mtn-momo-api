@@ -17,9 +17,9 @@ package io.rekast.sdk.network.okhttp
 
 import android.util.Base64
 import io.rekast.sdk.utils.MomoConstants
+import java.io.IOException
 import okhttp3.Interceptor
 import okhttp3.Response
-import java.io.IOException
 
 /**
  * Interceptor used to add the authorization to allow the user to get an hit the Access Token endpoint.

@@ -15,9 +15,9 @@
  */
 package io.rekast.sdk.sample.utils
 
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import javax.inject.Inject
 
 interface DispatcherProvider {
     fun main(): CoroutineDispatcher = Dispatchers.Main

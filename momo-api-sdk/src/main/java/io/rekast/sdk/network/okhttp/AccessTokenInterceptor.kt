@@ -16,9 +16,9 @@
 package io.rekast.sdk.network.okhttp
 
 import io.rekast.sdk.utils.MomoConstants
+import java.io.IOException
 import okhttp3.Interceptor
 import okhttp3.Response
-import java.io.IOException
 
 /**
  * This is an authentication Interceptor. It is used after the client has received and Access Token.

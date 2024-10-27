@@ -7,7 +7,7 @@ pluginManagement {
 
     plugins {
         id("com.android.application") version "8.7.1"
-        id("org.jetbrains.kotlin.android") version "1.8.10"
+        id("org.jetbrains.kotlin.android") version "2.0.21"
         id("org.jetbrains.kotlin.android.extensions") version "1.7.0"
         id("com.android.library") version "8.7.1"
         id("com.google.firebase.crashlytics") version "3.0.2"

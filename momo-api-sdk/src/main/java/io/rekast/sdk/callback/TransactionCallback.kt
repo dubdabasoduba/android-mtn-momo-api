@@ -20,12 +20,12 @@ import io.rekast.sdk.model.api.ErrorResponse
 import io.rekast.sdk.model.api.MomoTransaction
 import io.rekast.sdk.utils.Settings
 import io.rekast.sdk.utils.TransactionStatus
+import java.io.IOException
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.IOException
 
 /**
  * Transaction MomoCallback for the MTN MOMO API

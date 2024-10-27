@@ -19,9 +19,9 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.sample.BuildConfig
-import org.apache.commons.lang3.StringUtils
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import org.apache.commons.lang3.StringUtils
 
 object Utils {
     fun saveApiKey(context: Context, apiKey: String) {

@@ -85,7 +85,6 @@ dependencies {
 
     implementation(libs.google.dagger.hilt)
     implementation(libs.androidx.hilt.work)
-    kapt(libs.androidx.hilt.compiler)
     kapt(libs.hilt.android.compiler)
 
     debugImplementation(libs.chuckerteam.chucker)

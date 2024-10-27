@@ -30,11 +30,11 @@ import io.rekast.sdk.network.api.client.Clients.getDisbursement
 import io.rekast.sdk.network.api.client.Clients.getMomoCollection
 import io.rekast.sdk.network.okhttp.AccessTokenInterceptor
 import io.rekast.sdk.network.okhttp.BasicAuthInterceptor
+import javax.inject.Inject
+import javax.inject.Singleton
 import okhttp3.ResponseBody
 import org.apache.commons.lang3.StringUtils
 import retrofit2.Response
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * The BaseRepository Class. Responsible for making the actual network call to the MOMO APIs.
