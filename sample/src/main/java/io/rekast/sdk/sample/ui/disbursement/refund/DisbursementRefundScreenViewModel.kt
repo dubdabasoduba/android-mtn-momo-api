@@ -101,7 +101,7 @@ class DisbursementRefundScreenViewModel : ViewModel() {
             paymentNote.value!!.isNotEmpty()
         ) {
             val accessToken = context?.let { Utils.getAccessToken(it) }
-            val transactionUuid = Settings.generateUUID()
+            val transactionUuid = Settings().generateUUID()
             val creditTransaction = createRefundTransaction()
             if (StringUtils.isNotBlank(accessToken)) {
                 accessToken?.let { accessTokenString ->
@@ -109,7 +109,7 @@ class DisbursementRefundScreenViewModel : ViewModel() {
                         accessTokenString,
                         creditTransaction,
                         io.rekast.sdk.BuildConfig.MOMO_API_VERSION_V2,
-                        Settings.getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
+                        Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
                         transactionUuid
                     ) { momoAPIResult ->
                         when (momoAPIResult) {
@@ -159,7 +159,7 @@ class DisbursementRefundScreenViewModel : ViewModel() {
                 momoAPi?.getRefundStatus(
                     referenceId,
                     io.rekast.sdk.BuildConfig.MOMO_API_VERSION_V1,
-                    Settings.getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
+                    Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
                     accessTokenString
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
@@ -218,7 +218,7 @@ class DisbursementRefundScreenViewModel : ViewModel() {
             notificationMessage = deliveryNote.value!!.toString()
         )
         if (StringUtils.isNotBlank(accessToken) &&
-            Settings.checkNotificationMessageLength(momoNotification.notificationMessage)
+            Settings().checkNotificationMessageLength(momoNotification.notificationMessage)
         ) {
             accessToken?.let {
                 momoAPi?.requestToPayDeliveryNotification(
@@ -226,7 +226,7 @@ class DisbursementRefundScreenViewModel : ViewModel() {
                     referenceId,
                     BuildConfig.MOMO_API_VERSION_V1,
                     ProductType.DISBURSEMENTS.productType,
-                    Settings.getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
+                    Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
                     it
                 ) { momoAPIResult ->
                     when (momoAPIResult) {

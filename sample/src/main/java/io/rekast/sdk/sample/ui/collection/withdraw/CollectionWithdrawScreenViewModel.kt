@@ -103,14 +103,14 @@ class CollectionWithdrawScreenViewModel : ViewModel() {
         ) {
             val accessToken = context?.let { Utils.getAccessToken(it) }
             val creditTransaction = createRequestToWithdrawTransaction()
-            val transactionUuid = Settings.generateUUID()
+            val transactionUuid = Settings().generateUUID()
             if (StringUtils.isNotBlank(accessToken)) {
                 accessToken?.let {
                     momoAPi?.requestToWithdraw(
                         it,
                         creditTransaction,
                         BuildConfig.MOMO_API_VERSION_V2,
-                        Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
+                        Settings().getProductSubscriptionKeys(ProductType.COLLECTION),
                         transactionUuid
                     ) { momoAPIResult ->
                         when (momoAPIResult) {
@@ -156,7 +156,7 @@ class CollectionWithdrawScreenViewModel : ViewModel() {
                 momoAPi?.requestToWithdrawTransactionStatus(
                     referenceId,
                     BuildConfig.MOMO_API_VERSION_V1,
-                    Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
+                    Settings().getProductSubscriptionKeys(ProductType.COLLECTION),
                     it
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
@@ -214,7 +214,7 @@ class CollectionWithdrawScreenViewModel : ViewModel() {
             notificationMessage = deliveryNote.value!!.toString()
         )
         if (StringUtils.isNotBlank(accessToken) &&
-            Settings.checkNotificationMessageLength(momoNotification.notificationMessage)
+            Settings().checkNotificationMessageLength(momoNotification.notificationMessage)
         ) {
             accessToken?.let {
                 momoAPi?.requestToPayDeliveryNotification(
@@ -222,7 +222,7 @@ class CollectionWithdrawScreenViewModel : ViewModel() {
                     referenceId,
                     BuildConfig.MOMO_API_VERSION_V1,
                     ProductType.COLLECTION.productType,
-                    Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
+                    Settings().getProductSubscriptionKeys(ProductType.COLLECTION),
                     it
                 ) { momoAPIResult ->
                     when (momoAPIResult) {

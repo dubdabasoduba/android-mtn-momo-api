@@ -19,8 +19,8 @@ object Constants {
     object NavigationTitle {
         const val HOME = "Home"
         const val REMITTANCE = "Remittance"
-        const val COLLECTION_REQUEST_TO_PAY = "Collection | Request To Pay"
-        const val COLLECTION_REQUEST_TO_WITHDRAW = "Collection | Request To Withdraw"
+        const val MomoCOLLECTION_REQUEST_TO_PAY = "MomoCollection | Request To Pay"
+        const val MomoCOLLECTION_REQUEST_TO_WITHDRAW = "MomoCollection | Request To Withdraw"
         const val DISBURSEMENT_DEPOSIT = "Disbursement | Deposit"
         const val DISBURSEMENT_REFUND = "Disbursement | Refund"
     }

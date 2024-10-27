@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.network.products
+package io.rekast.sdk.network.service.products
 
 import io.rekast.sdk.model.api.MomoTransaction
 import io.rekast.sdk.utils.MomoConstants
@@ -26,10 +26,10 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 /**
- * This is the retrofit interface to handle the various calls to the Collection API. This interface defines the
+ * This is the retrofit interface to handle the various calls to the MomoCollection API. This interface defines the
  * method, the request and response from the API.
  */
-sealed interface Collection : Common {
+sealed interface MomoCollection : Common {
     /**
      * Makes a request to pay a specific user
      * @param[momoTransaction] -- This is the Transfer Payload [MomoTransaction]

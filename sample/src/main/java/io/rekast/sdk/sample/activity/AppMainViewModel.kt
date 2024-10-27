@@ -18,13 +18,13 @@ package io.rekast.sdk.sample.activity
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.io.rekast.momoapi.utils.Settings
 import io.rekast.sdk.BuildConfig
 import io.rekast.sdk.model.api.MomoTransaction
 import io.rekast.sdk.network.api.route.Routes
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.ProductType
+import io.rekast.sdk.utils.Settings
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -46,7 +46,7 @@ class AppMainViewModel : ViewModel() {
     fun checkUser() {
         viewModelScope.launch {
             val user = routes?.checkApiUser(
-                Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
                 BuildConfig.MOMO_API_VERSION_V1
             )
 
@@ -55,7 +55,7 @@ class AppMainViewModel : ViewModel() {
             } else {
                 Timber.e(user?.errorBody()?.string())
                 val createdUser = routes?.createApiUser(
-                    Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                    Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
                     BuildConfig.MOMO_API_VERSION_V1,
                     BuildConfig.MOMO_API_USER_ID
                 )
@@ -75,7 +75,7 @@ class AppMainViewModel : ViewModel() {
                 getAccessToken()
             } else {
                 val userApiKey = routes?.getUserApiKey(
-                    Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                    Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
                     BuildConfig.MOMO_API_VERSION_V1
                 )
 
@@ -97,7 +97,7 @@ class AppMainViewModel : ViewModel() {
             if (StringUtils.isNotBlank(apiUserKey) && StringUtils.isBlank(accessToken)) {
                 apiUserKey?.let { apiKey ->
                     val accessToken = routes?.getAccessToken(
-                        Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                        Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
                         apiKey,
                         ProductType.REMITTANCE.productType
                     )
@@ -125,7 +125,7 @@ class AppMainViewModel : ViewModel() {
         if (StringUtils.isNotBlank(accessToken)) {
             momoAPI.getBasicUserInfo(
                 "46733123459",
-                Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
                 accessToken,
                 BuildConfig.MOMO_API_VERSION_V1,
                 Constants.ProductTypes.REMITTANCE,
@@ -148,7 +148,7 @@ class AppMainViewModel : ViewModel() {
         val accessToken = Utils.getAccessToken(this)
         if (StringUtils.isNotBlank(accessToken)) {
             momoAPI.getUserInfoWithConsent(
-                Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
                 accessToken,
                 BuildConfig.MOMO_API_VERSION_V1,
                 Constants.ProductTypes.REMITTANCE,
@@ -174,7 +174,7 @@ class AppMainViewModel : ViewModel() {
                 getAccessToken()
             } else {
                 routes?.getUserApiKey(
-                    Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                    Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
                     BuildConfig.MOMO_API_VERSION_V1
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
@@ -199,7 +199,7 @@ class AppMainViewModel : ViewModel() {
             if (StringUtils.isNotBlank(apiUserKey) && StringUtils.isBlank(accessToken)) {
                 apiUserKey?.let { apiKey ->
                     routes?.getAccessToken(
-                        Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                        Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
                         apiKey,
                         ProductType.REMITTANCE.productType
                     ) { momoAPIResult ->
@@ -226,7 +226,7 @@ class AppMainViewModel : ViewModel() {
 
     fun refund(requestToPayUuid: String) {
         val accessToken = context?.let { Utils.getAccessToken(it) }
-        val transactionUuid = Settings.generateUUID()
+        val transactionUuid = Settings().generateUUID()
         if (StringUtils.isNotBlank(accessToken) && StringUtils.isNotBlank(requestToPayUuid)) {
             val creditTransaction = createRefundTransaction(requestToPayUuid)
             accessToken?.let {
@@ -234,7 +234,7 @@ class AppMainViewModel : ViewModel() {
                     it,
                     creditTransaction,
                     BuildConfig.MOMO_API_VERSION_V2,
-                    Settings.getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
+                    Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
                     transactionUuid
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
@@ -257,7 +257,7 @@ class AppMainViewModel : ViewModel() {
                 routes?.getRefundStatus(
                     referenceId,
                     BuildConfig.MOMO_API_VERSION_V1,
-                    Settings.getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
+                    Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
                     it
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
@@ -280,7 +280,7 @@ class AppMainViewModel : ViewModel() {
             "30",
             "EUR",
             null,
-            Settings.generateUUID(),
+            Settings().generateUUID(),
             null,
             null,
             "Testing",

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.network.products
+package io.rekast.sdk.network.service.products
 
 import io.rekast.sdk.model.api.MomoTransaction
 import io.rekast.sdk.utils.MomoConstants

@@ -102,14 +102,14 @@ class DisbursementDepositScreenViewModel : ViewModel() {
         ) {
             val accessToken = context?.let { Utils.getAccessToken(it) }
             val creditTransaction = createDebitTransaction()
-            val transactionUuid = Settings.generateUUID()
+            val transactionUuid = Settings().generateUUID()
             if (StringUtils.isNotBlank(accessToken)) {
                 if (accessToken != null) {
                     momoAPi?.deposit(
                         accessToken,
                         creditTransaction,
                         BuildConfig.MOMO_API_VERSION_V2,
-                        Settings.getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
+                        Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
                         transactionUuid
                     ) { momoAPIResult ->
                         when (momoAPIResult) {
@@ -159,7 +159,7 @@ class DisbursementDepositScreenViewModel : ViewModel() {
                 momoAPi?.getDepositStatus(
                     referenceId,
                     BuildConfig.MOMO_API_VERSION_V1,
-                    Settings.getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
+                    Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
                     it
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
@@ -217,7 +217,7 @@ class DisbursementDepositScreenViewModel : ViewModel() {
             notificationMessage = deliveryNote.value!!.toString()
         )
         if (StringUtils.isNotBlank(accessToken) &&
-            Settings.checkNotificationMessageLength(momoNotification.notificationMessage)
+            Settings().checkNotificationMessageLength(momoNotification.notificationMessage)
         ) {
             accessToken?.let {
                 momoAPi?.requestToPayDeliveryNotification(
@@ -225,7 +225,7 @@ class DisbursementDepositScreenViewModel : ViewModel() {
                     referenceId,
                     BuildConfig.MOMO_API_VERSION_V1,
                     ProductType.DISBURSEMENTS.productType,
-                    Settings.getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
+                    Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
                     it
                 ) { momoAPIResult ->
                     when (momoAPIResult) {

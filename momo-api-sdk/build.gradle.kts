@@ -1,14 +1,15 @@
 import com.vanniktech.maven.publish.SonatypeHost
+import org.gradle.kotlin.dsl.hilt
 
 plugins {
+    id("maven-publish")
+    id("signing")
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.secrets)
     alias(libs.plugins.vanniktech.maven.publish)
-    id("maven-publish")
-    id("signing")
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
 }
@@ -24,6 +25,10 @@ android {
 
     secrets {
         ignoreList.add("sdk.*")
+    }
+
+    kapt {
+        correctErrorTypes = true
     }
 
     defaultConfig {
@@ -76,14 +81,17 @@ dependencies {
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.jakewharton.timber)
 
     implementation(libs.google.dagger.hilt)
+    implementation(libs.androidx.hilt.work)
+    kapt(libs.androidx.hilt.compiler)
     kapt(libs.hilt.android.compiler)
+
     debugImplementation(libs.chuckerteam.chucker)
     releaseImplementation(libs.chuckerteam.chucker.noop)
 
     // debug
-    implementation(libs.jakewharton.timber)
     testImplementation(libs.junit)
 }
 

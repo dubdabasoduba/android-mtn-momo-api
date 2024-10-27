@@ -3,12 +3,13 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.compose.compiler)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version libs.versions.secrets.get()
     id("com.diffplug.spotless") version libs.versions.spotless.get()
     id("org.jetbrains.dokka") version libs.versions.dokka.get()
     id("com.github.ben-manes.versions") version libs.versions.gradleVersionsPlugin.get()
+    // id("org.jetbrains.kotlin.jvm") version "2.1.0-Beta2" apply false
 }
 
 android {
@@ -26,6 +27,9 @@ android {
         ignoreList.add("sdk.*")
     }
 
+    kapt {
+        correctErrorTypes = true
+    }
     defaultConfig {
         applicationId = "io.rekast.sdk.sample"
         minSdk = 24
@@ -51,8 +55,9 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlinAndroid.get()
+        kotlinCompilerExtensionVersion = libs.versions.kotlinCompiler.get()
     }
 
     buildTypes {
@@ -70,7 +75,9 @@ android {
 
 composeCompiler {
     reportsDestination = layout.buildDirectory.dir("compose_compiler")
-    stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
+    stabilityConfigurationFiles.addAll(
+        rootProject.layout.projectDirectory.file("stability_config.conf")
+    )
 }
 
 kapt {
@@ -106,14 +113,16 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.runtime.livedata)
     implementation(libs.androidx.compose.runtime.rxjava)
-    implementation(libs.kotlin.stdlib)
     implementation(libs.androidx.customview)
     implementation(libs.androidx.customview.poolingcontainer)
+    implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.compose.foundation)
 
     implementation(libs.google.dagger.hilt)
-    kapt(libs.google.dagger.hilt.compiler)
+    //implementation(libs.androidx.hilt.work)
+    kapt(libs.androidx.hilt.compiler)
+    kapt(libs.hilt.android.compiler)
 
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.compose)
@@ -152,4 +161,10 @@ dependencies {
     testImplementation(libs.androidx.lifecycle.runtime.testing)
 
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // For Hilt testing
+    // androidTestImplementation(libs.google.dagger.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.android.compiler)
+    // testImplementation(libs.google.dagger.hilt.android.testing)
+    kaptTest(libs.hilt.android.compiler)
 }

@@ -46,7 +46,7 @@ class MainScreenFragmentViewModel : ViewModel() {
             accessToken?.let {
                 momoAPi!!.getBasicUserInfo(
                     "99733123459",
-                    Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                    Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
                     it,
                     BuildConfig.MOMO_API_VERSION_V1,
                     ProductType.REMITTANCE.productType
@@ -99,7 +99,7 @@ class MainScreenFragmentViewModel : ViewModel() {
                     accountHolder,
                     BuildConfig.MOMO_API_VERSION_V1,
                     ProductType.REMITTANCE.productType,
-                    Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                    Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
                     accessToken
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
@@ -148,7 +148,7 @@ class MainScreenFragmentViewModel : ViewModel() {
             accessToken?.let {
                 momoAPi?.getBalance(
                     Constants.SANDBOX_CURRENCY,
-                    Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                    Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
                     it,
                     BuildConfig.MOMO_API_VERSION_V1,
                     ProductType.REMITTANCE.productType

@@ -103,7 +103,7 @@ class RemittanceScreenViewModel : ViewModel() {
         ) {
             val accessToken = context?.let { Utils.getAccessToken(it) }
             val creditTransaction = createDebitTransaction()
-            val transactionUuid = Settings.generateUUID()
+            val transactionUuid = Settings().generateUUID()
             if (StringUtils.isNotBlank(accessToken)) {
                 if (accessToken != null) {
                     momoAPi?.transfer(
@@ -111,7 +111,7 @@ class RemittanceScreenViewModel : ViewModel() {
                         creditTransaction,
                         BuildConfig.MOMO_API_VERSION_V1,
                         ProductType.REMITTANCE.productType,
-                        Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                        Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
                         transactionUuid
                     ) { momoAPIResult ->
                         when (momoAPIResult) {
@@ -176,7 +176,7 @@ class RemittanceScreenViewModel : ViewModel() {
                     referenceId,
                     BuildConfig.MOMO_API_VERSION_V1,
                     ProductType.REMITTANCE.productType,
-                    Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                    Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
                     accessToken
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
@@ -219,7 +219,7 @@ class RemittanceScreenViewModel : ViewModel() {
             notificationMessage = deliveryNote.value!!.toString()
         )
         if (StringUtils.isNotBlank(accessToken) &&
-            Settings.checkNotificationMessageLength(momoNotification.notificationMessage)
+            Settings().checkNotificationMessageLength(momoNotification.notificationMessage)
         ) {
             accessToken?.let {
                 momoAPi?.requestToPayDeliveryNotification(
@@ -227,7 +227,7 @@ class RemittanceScreenViewModel : ViewModel() {
                     referenceId,
                     BuildConfig.MOMO_API_VERSION_V1,
                     ProductType.REMITTANCE.productType,
-                    Settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                    Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
                     it
                 ) { momoAPIResult ->
                     when (momoAPIResult) {

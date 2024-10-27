@@ -15,41 +15,58 @@
  */
 package io.rekast.sdk.network.api.client
 
-import io.io.rekast.momoapi.utils.Settings
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import io.rekast.sdk.BuildConfig
-import io.rekast.sdk.network.Authentication
 import io.rekast.sdk.network.okhttp.UnsafeOkHttpClient
-import io.rekast.sdk.network.products.Collection
-import io.rekast.sdk.network.products.Common
-import io.rekast.sdk.network.products.Disbursements
+import io.rekast.sdk.network.service.Authentication
+import io.rekast.sdk.network.service.products.Common
+import io.rekast.sdk.network.service.products.Disbursements
+import io.rekast.sdk.network.service.products.MomoCollection
+import io.rekast.sdk.utils.Settings
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 /**
  * Provides an instance of retrofit to all classes that need it.
  */
 
-open class Clients {
+@Module
+@InstallIn(SingletonComponent::class)
+object Clients {
     /**
      * Common APIs across all the Products
      */
+    @Provides
+    @Singleton
     fun getAuthentication(baseUrl: String, authentication: Interceptor?): Authentication =
-        getRetrofit(baseUrl, authentication).create(Authentication::class.java)
+        provideRetrofit(baseUrl, authentication).create(Authentication::class.java)
 
-    fun getCollection(baseUrl: String, authentication: Interceptor): Collection =
-        getRetrofit(baseUrl, authentication).create(Collection::class.java)
+    @Provides
+    @Singleton
+    fun getMomoCollection(baseUrl: String, authentication: Interceptor): MomoCollection =
+        provideRetrofit(baseUrl, authentication).create(MomoCollection::class.java)
 
+    @Provides
+    @Singleton
     fun getCommon(baseUrl: String, authentication: Interceptor): Common =
-        getRetrofit(baseUrl, authentication).create(Common::class.java)
+        provideRetrofit(baseUrl, authentication).create(Common::class.java)
 
+    @Provides
+    @Singleton
     fun getDisbursement(baseUrl: String, authentication: Interceptor): Disbursements =
-        getRetrofit(baseUrl, authentication).create(Disbursements::class.java)
+        provideRetrofit(baseUrl, authentication).create(Disbursements::class.java)
 
-    fun getRetrofit(baseUrl: String, authentication: Interceptor?): Retrofit {
+    @Provides
+    @Singleton
+    fun provideRetrofit(baseUrl: String, authentication: Interceptor?): Retrofit {
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         val builder = if (baseUrl == BuildConfig.MOMO_BASE_URL) {
             UnsafeOkHttpClient().unsafeOkHttpClient.addInterceptor(httpLoggingInterceptor)
@@ -69,14 +86,14 @@ open class Clients {
         authentication: Interceptor?
     ): OkHttpClient {
         return if (authentication == null) {
-            builder.connectTimeout(Settings.CONNECT_TIMEOUT, TimeUnit.SECONDS)
-                .writeTimeout(Settings.WRITE_TIMEOUT, TimeUnit.SECONDS)
-                .readTimeout(Settings.READ_TIMEOUT, TimeUnit.SECONDS)
+            builder.connectTimeout(Settings().CONNECT_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(Settings().WRITE_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(Settings().READ_TIMEOUT, TimeUnit.SECONDS)
                 .build()
         } else {
-            builder.connectTimeout(Settings.CONNECT_TIMEOUT, TimeUnit.SECONDS)
-                .writeTimeout(Settings.WRITE_TIMEOUT, TimeUnit.SECONDS)
-                .readTimeout(Settings.READ_TIMEOUT, TimeUnit.SECONDS)
+            builder.connectTimeout(Settings().CONNECT_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(Settings().WRITE_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(Settings().READ_TIMEOUT, TimeUnit.SECONDS)
                 .addInterceptor(authentication)
                 .build()
         }

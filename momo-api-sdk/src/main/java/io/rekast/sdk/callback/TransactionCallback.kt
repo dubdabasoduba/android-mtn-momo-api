@@ -16,9 +16,9 @@
 package io.rekast.sdk.callback
 
 import com.google.gson.GsonBuilder
-import io.io.rekast.momoapi.utils.Settings
 import io.rekast.sdk.model.api.ErrorResponse
 import io.rekast.sdk.model.api.MomoTransaction
+import io.rekast.sdk.utils.Settings
 import io.rekast.sdk.utils.TransactionStatus
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -39,7 +39,7 @@ class TransactionCallback(
 
     override fun onResponse(call: Call<ResponseBody?>, response: Response<ResponseBody?>) {
         if (response.isSuccessful) {
-            val momoTransaction: MomoTransaction? = Settings.generateTransactionFromResponse(response)
+            val momoTransaction: MomoTransaction? = Settings().generateTransactionFromResponse(response)
             if (momoTransaction?.status != null) {
                 if (momoTransaction.status == TransactionStatus.SUCCESSFUL.name) {
                     callback.invoke(

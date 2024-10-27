@@ -13,39 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.io.rekast.momoapi.utils
+package io.rekast.sdk.utils
 
 import com.google.gson.Gson
 import io.rekast.sdk.BuildConfig
 import io.rekast.sdk.model.api.MomoTransaction
-import io.rekast.sdk.utils.MomoConstants
-import io.rekast.sdk.utils.ProductType
 import okhttp3.ResponseBody
 import org.apache.commons.lang3.StringUtils
 import retrofit2.Response
 import java.util.*
+import javax.inject.Inject
 
 /**
- * Contains General Settings used in the library.
+ * Contains General Settings() used in the library.
  */
-object Settings {
+class Settings @Inject constructor() {
 
     fun generateUUID(): String = UUID.randomUUID().toString()
 
     /**
      * Connection timeout duration
      */
-    const val CONNECT_TIMEOUT: Long = 60 * 1000
+    val CONNECT_TIMEOUT: Long = 60 * 1000
 
     /**
      * Connection Read timeout duration
      */
-    const val READ_TIMEOUT: Long = 60 * 1000
+    val READ_TIMEOUT: Long = 60 * 1000
 
     /**
      * Connection write timeout duration
      */
-    const val WRITE_TIMEOUT: Long = 60 * 1000
+    val WRITE_TIMEOUT: Long = 60 * 1000
 
     /**
      * The MSISDN sending the funds

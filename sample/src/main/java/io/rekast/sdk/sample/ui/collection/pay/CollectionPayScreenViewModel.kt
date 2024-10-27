@@ -103,14 +103,14 @@ class CollectionPayScreenViewModel : ViewModel() {
         ) {
             val accessToken = context?.let { Utils.getAccessToken(it) }
             val creditTransaction = createRequestToPayTransaction()
-            val transactionUuid = Settings.generateUUID()
+            val transactionUuid = Settings().generateUUID()
             if (StringUtils.isNotBlank(accessToken)) {
                 accessToken?.let {
                     momoAPi?.requestToPay(
                         it,
                         creditTransaction,
                         BuildConfig.MOMO_API_VERSION_V1,
-                        Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
+                        Settings().getProductSubscriptionKeys(ProductType.COLLECTION),
                         transactionUuid
                     ) { momoAPIResult ->
                         when (momoAPIResult) {
@@ -161,7 +161,7 @@ class CollectionPayScreenViewModel : ViewModel() {
                 momoAPi?.requestToPayTransactionStatus(
                     referenceId,
                     BuildConfig.MOMO_API_VERSION_V1,
-                    Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
+                    Settings().getProductSubscriptionKeys(ProductType.COLLECTION),
                     it
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
@@ -219,7 +219,7 @@ class CollectionPayScreenViewModel : ViewModel() {
             notificationMessage = deliveryNote.value!!.toString()
         )
         if (StringUtils.isNotBlank(accessToken) &&
-            Settings.checkNotificationMessageLength(momoNotification.notificationMessage)
+            Settings().checkNotificationMessageLength(momoNotification.notificationMessage)
         ) {
             accessToken?.let {
                 momoAPi?.requestToPayDeliveryNotification(
@@ -227,7 +227,7 @@ class CollectionPayScreenViewModel : ViewModel() {
                     referenceId,
                     BuildConfig.MOMO_API_VERSION_V1,
                     ProductType.COLLECTION.productType,
-                    Settings.getProductSubscriptionKeys(ProductType.COLLECTION),
+                    Settings().getProductSubscriptionKeys(ProductType.COLLECTION),
                     it
                 ) { momoAPIResult ->
                     when (momoAPIResult) {
