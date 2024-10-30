@@ -27,13 +27,11 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme
 import io.rekast.sdk.sample.views.AppMainActivity
 import io.rekast.sdk.sample.views.AppMainViewModel
-import io.rekast.sdk.sample.views.home.HomeScreenViewModel
 import kotlin.getValue
 
 @ExperimentalMaterialApi

@@ -26,10 +26,10 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 /**
- * This is the retrofit interface to handle the various calls to the Disbursements API. This interface defines the
+ * This is the retrofit interface to handle the various calls to the DisbursementsService API. This interface defines the
  * method, the request and response from the API.
  */
-sealed interface Disbursements : Common {
+sealed interface DisbursementsService : CommonService {
     /**
      * Makes a request to deposit to a specific user
      * @param[momoTransaction] -- This is the Transfer Payload [MomoTransaction]

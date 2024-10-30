@@ -25,10 +25,10 @@ import io.rekast.sdk.model.api.UserInfoWithConsent
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.User
 import io.rekast.sdk.model.authentication.UserKey
-import io.rekast.sdk.network.service.Authentication
-import io.rekast.sdk.network.service.products.Common
-import io.rekast.sdk.network.service.products.Disbursements
-import io.rekast.sdk.network.service.products.MomoCollection
+import io.rekast.sdk.network.service.AuthenticationService
+import io.rekast.sdk.network.service.products.CommonService
+import io.rekast.sdk.network.service.products.DisbursementsService
+import io.rekast.sdk.network.service.products.CollectionService
 import javax.inject.Inject
 import javax.inject.Singleton
 import okhttp3.ResponseBody
@@ -41,10 +41,10 @@ import retrofit2.Response
  */
 @Singleton
 class DefaultRepository @Inject constructor(
-    private val authentication: Authentication,
-    private val common: Common,
-    private val disbursements: Disbursements,
-    private val collection: MomoCollection
+    private val authenticationService: AuthenticationService,
+    private val commonService: CommonService,
+    private val disbursementsService: DisbursementsService,
+    private val collection: CollectionService
 ) {
 
     suspend fun createApiUser(
@@ -52,7 +52,7 @@ class DefaultRepository @Inject constructor(
         apiVersion: String,
         uuid: String
     ): Response<User> {
-        return authentication.createApiUser(apiVersion, uuid, productSubscriptionKey)
+        return authenticationService.createApiUser(apiVersion, uuid, productSubscriptionKey)
     }
 
     /**
@@ -62,7 +62,7 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         apiVersion: String
     ): Response<User> {
-        return authentication
+        return authenticationService
             .getApiUser(apiVersion, BuildConfig.MOMO_API_USER_ID, productSubscriptionKey)
     }
 
@@ -73,7 +73,7 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         apiVersion: String
     ): Response<UserKey> {
-        return authentication
+        return authenticationService
             .getApiUserKey(apiVersion, BuildConfig.MOMO_API_USER_ID, productSubscriptionKey)
     }
 
@@ -85,7 +85,7 @@ class DefaultRepository @Inject constructor(
         apiKey: String,
         productType: String
     ): Response<AccessToken> {
-        return authentication.getAccessToken(productType, productSubscriptionKey)
+        return authenticationService.getAccessToken(productType, productSubscriptionKey)
     }
 
     /**
@@ -99,7 +99,7 @@ class DefaultRepository @Inject constructor(
         productType: String
     ): Response<AccountBalance> {
         return if (StringUtils.isNotBlank(currency)) {
-            common.getAccountBalanceInSpecificCurrency(
+            commonService.getAccountBalanceInSpecificCurrency(
                 currency.toString(),
                 productType,
                 apiVersion,
@@ -107,7 +107,7 @@ class DefaultRepository @Inject constructor(
                 BuildConfig.MOMO_ENVIRONMENT
             )
         } else {
-            common.getAccountBalance(productType, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
+            commonService.getAccountBalance(productType, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
         }
     }
 
@@ -121,7 +121,7 @@ class DefaultRepository @Inject constructor(
         apiVersion: String,
         productType: String
     ): Response<BasicUserInfo> {
-        return common.getBasicUserInfo(accountHolder, productType, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
+        return commonService.getBasicUserInfo(accountHolder, productType, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
     }
 
     /**
@@ -133,7 +133,7 @@ class DefaultRepository @Inject constructor(
         apiVersion: String,
         productType: String
     ): Response<UserInfoWithConsent> {
-        return common.getUserInfoWithConsent(productType, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
+        return commonService.getUserInfoWithConsent(productType, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
     }
 
     /**
@@ -147,7 +147,7 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         uuid: String
     ): Response<Unit> {
-        return common.transfer(momoTransaction, apiVersion, productType, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT, uuid)
+        return commonService.transfer(momoTransaction, apiVersion, productType, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT, uuid)
     }
 
     /**
@@ -160,7 +160,7 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         accessToken: String
     ): Response<ResponseBody> {
-        return common.getTransferStatus(referenceId, apiVersion, productType, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
+        return commonService.getTransferStatus(referenceId, apiVersion, productType, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
     }
 
     /**
@@ -174,7 +174,7 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         accessToken: String
     ): Response<ResponseBody> {
-        return common.requestToPayDeliveryNotification(
+        return commonService.requestToPayDeliveryNotification(
             momoNotification,
             referenceId,
             apiVersion,
@@ -195,7 +195,7 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         accessToken: String
     ): Response<ResponseBody> {
-        return common.validateAccountHolderStatus(
+        return commonService.validateAccountHolderStatus(
             accountHolder.partyId,
             accountHolder.partyIdType,
             apiVersion,
@@ -250,7 +250,7 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         uuid: String
     ): Response<Unit> {
-        return disbursements.deposit(momoTransaction, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT, uuid)
+        return disbursementsService.deposit(momoTransaction, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT, uuid)
     }
 
     fun getDepositStatus(
@@ -259,7 +259,7 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         accessToken: String
     ): Response<ResponseBody> {
-        return disbursements.getDepositStatus(referenceId, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
+        return disbursementsService.getDepositStatus(referenceId, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
     }
 
     fun refund(
@@ -269,7 +269,7 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         uuid: String
     ): Response<Unit> {
-        return disbursements.refund(momoTransaction, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT, uuid)
+        return disbursementsService.refund(momoTransaction, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT, uuid)
     }
 
     fun getRefundStatus(
@@ -278,6 +278,6 @@ class DefaultRepository @Inject constructor(
         productSubscriptionKey: String,
         accessToken: String
     ): Response<ResponseBody> {
-        return disbursements.getRefundStatus(referenceId, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
+        return disbursementsService.getRefundStatus(referenceId, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
     }
 }

@@ -13,19 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.sample.utils
+package io.rekast.sdk.model.authentication
 
-object Constants {
-    object NavigationTitle {
-        const val HOME = "Home"
-        const val REMITTANCE = "Remittance"
-        const val COLLECTION_Service_REQUEST_TO_PAY = "CollectionService | Request To Pay"
-        const val COLLECTION_Service_REQUEST_TO_WITHDRAW = "CollectionService | Request To Withdraw"
-        const val DISBURSEMENT_DEPOSIT = "Disbursement | Deposit"
-        const val DISBURSEMENT_REFUND = "Disbursement | Refund"
-    }
-
-    const val SANDBOX_CURRENCY = "EUR"
-    const val STRING_LENGTH = 12
-    const val EMPTY_STRING = ""
-}
+data class AccessTokenCredentials(
+    var accessToken: String
+)

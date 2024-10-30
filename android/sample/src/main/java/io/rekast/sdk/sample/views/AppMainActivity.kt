@@ -20,7 +20,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.fragment.app.FragmentContainerView
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,7 +35,7 @@ open class AppMainActivity() : AppCompatActivity() {
     @Inject
     lateinit var dispatcherProvider: DefaultDispatcherProvider
     lateinit var navHostFragment: NavHostFragment
-    private  val appMainViewModel by viewModels<AppMainViewModel>()
+    private val appMainViewModel by viewModels<AppMainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +48,6 @@ open class AppMainActivity() : AppCompatActivity() {
             .replace(R.id.navigation_host, navHostFragment)
             .setPrimaryNavigationFragment(navHostFragment)
             .commit()
-
     }
 
     override fun onResume() {

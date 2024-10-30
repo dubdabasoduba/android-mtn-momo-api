@@ -27,7 +27,6 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.rekast.sdk.sample.ui.theme.AppTheme

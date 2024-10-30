@@ -29,7 +29,7 @@ import retrofit2.http.Path
  * This is the retrofit interface to handle the various calls to the Auth api.
  * This interface defines the method, the request and response from the API.
  */
-sealed interface Authentication {
+sealed interface AuthenticationService {
 
     @POST(MomoConstants.EndPoints.CREATE_API_USER)
     suspend fun createApiUser(

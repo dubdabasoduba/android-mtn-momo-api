@@ -37,12 +37,12 @@ import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.SnackBarThemeOptions
 import io.rekast.sdk.sample.utils.annotation.PreviewWithBackgroundExcludeGenerated
 import io.rekast.sdk.sample.utils.hookSnackBar
+import kotlin.let
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlin.let
 
-@androidx.compose.runtime.Composable
+@Composable
 fun CollectionScreen(
     navController: NavController?,
     snackStateFlow: SharedFlow<SnackBarComponentConfiguration>,

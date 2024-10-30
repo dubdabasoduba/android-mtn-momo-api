@@ -44,7 +44,7 @@ open class AppMainViewModel @Inject constructor(
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
     val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
 
-   fun checkUser() {
+    fun checkUser() {
         viewModelScope.launch {
             val user = defaultRepository.checkApiUser(
                 Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),

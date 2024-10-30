@@ -15,16 +15,18 @@
  */
 package io.rekast.sdk.network
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.rekast.sdk.BuildConfig
-import io.rekast.sdk.network.okhttp.UnsafeOkHttpClient
-import io.rekast.sdk.network.service.Authentication
-import io.rekast.sdk.network.service.products.Common
-import io.rekast.sdk.network.service.products.Disbursements
-import io.rekast.sdk.network.service.products.MomoCollection
+import io.rekast.sdk.network.Interceptor.UnsafeOkHttpClient
+import io.rekast.sdk.network.service.AuthenticationService
+import io.rekast.sdk.network.service.products.CommonService
+import io.rekast.sdk.network.service.products.DisbursementsService
+import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.utils.Settings
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -43,41 +45,64 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun getAuthentication(): Authentication =
-        provideRetrofit().create(Authentication::class.java)
+    fun getAuthentication(retrofit: Retrofit): AuthenticationService =
+        retrofit.create(AuthenticationService::class.java)
 
     @Provides
     @Singleton
-    fun getMomoCollection(): MomoCollection =
-        provideRetrofit().create(MomoCollection::class.java)
+    fun getMomoCollection(retrofit: Retrofit): CollectionService =
+        retrofit.create(CollectionService::class.java)
 
     @Provides
     @Singleton
-    fun getCommon(): Common =
-        provideRetrofit().create(Common::class.java)
+    fun getCommon(retrofit: Retrofit): CommonService =
+        retrofit.create(CommonService::class.java)
 
     @Provides
     @Singleton
-    fun getDisbursement(): Disbursements =
-        provideRetrofit().create(Disbursements::class.java)
+    fun getDisbursement(retrofit: Retrofit): DisbursementsService =
+        retrofit.create(DisbursementsService::class.java)
 
     @Provides
     @Singleton
-    fun provideRetrofit(): Retrofit {
-        val httpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-        val client = returnOkHttpClient(httpLoggingInterceptor)
+    fun provideRetrofit(
+        okHttpClient: OkHttpClient,
+        baseUrl: String,
+        gson: Gson
+    ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.MOMO_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
+            .baseUrl(baseUrl)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(okHttpClient)
             .build()
     }
 
-    private fun returnOkHttpClient(
-        httpLoggingInterceptor: HttpLoggingInterceptor
+    @Provides
+    @Singleton
+    fun providesHttpLoggingInterceptor(): HttpLoggingInterceptor {
+        return HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+    }
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson {
+        return GsonBuilder().create()
+    }
+
+    @Provides
+    @Singleton
+    fun providesBaseUrl(): String {
+        return BuildConfig.MOMO_BASE_URL
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(
+        httpLoggingInterceptor: HttpLoggingInterceptor,
+        baseUrl: String
     ): OkHttpClient {
-        val builder = if (BuildConfig.MOMO_BASE_URL.toString().contains("https")) {
-            OkHttpClient.Builder()
+        val builder = if (baseUrl.contains("https")) {
+            OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor)
         } else {
             UnsafeOkHttpClient().unsafeOkHttpClient.addInterceptor(httpLoggingInterceptor)
         }

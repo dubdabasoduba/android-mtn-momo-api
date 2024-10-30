@@ -13,26 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.network.okhttp
+package io.rekast.sdk.network.Interceptor
 
+import android.util.Base64
+import io.rekast.sdk.model.authentication.BasicAuthCredentials
 import io.rekast.sdk.utils.MomoConstants
 import java.io.IOException
 import okhttp3.Interceptor
 import okhttp3.Response
 
 /**
- * This is an authentication Interceptor. It is used after the client has received and Access Token.
- * It adds access token  to all endpoints that need Access Token Authentication.
- * @param [accessToken]
+ * Interceptor used to add the authorization to allow the user to get an hit the Access Token endpoint.
+ * It adds [apiUserId] and [apiKey] encoded to base 64 to all endpoints that need Basic AuthenticationService.
+ *
+ * @param [apiUserId]
+ * @param [apiKey]
  */
-class AccessTokenInterceptor(
-    private var accessToken: String
+class BasicAuthentication(
+    private val basicAuthCredentials: BasicAuthCredentials
 ) : Interceptor {
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
+        val apiUserId = basicAuthCredentials.apiUserId
+        val apiKey = basicAuthCredentials.apiKey
+        val keys = "$apiUserId:$apiKey"
+
         val request = chain.request().newBuilder()
-            .addHeader(MomoConstants.Headers.AUTHORIZATION, "${MomoConstants.TokenTypes.BEARER} $accessToken")
+            .addHeader(
+                MomoConstants.Headers.AUTHORIZATION,
+                "${MomoConstants.TokenTypes.BASIC} " + Base64.encodeToString(keys.toByteArray(), Base64.NO_WRAP)
+            )
             .build()
 
         return chain.proceed(request)

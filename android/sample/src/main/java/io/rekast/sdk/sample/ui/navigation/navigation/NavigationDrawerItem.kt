@@ -39,14 +39,14 @@ sealed class NavigationDrawerItem(
         NavigationDrawerItem(
             R.id.collectionPayScreenFragment,
             R.drawable.payments,
-            Constants.NavigationTitle.MomoCOLLECTION_REQUEST_TO_PAY
+            Constants.NavigationTitle.COLLECTION_Service_REQUEST_TO_PAY
         )
 
     object CollectionRequestToWithdraw :
         NavigationDrawerItem(
             R.id.collectionWithDrawScreenFragment,
             R.drawable.local_mall,
-            Constants.NavigationTitle.MomoCOLLECTION_REQUEST_TO_WITHDRAW
+            Constants.NavigationTitle.COLLECTION_Service_REQUEST_TO_WITHDRAW
         )
 
     object DisbursementDeposit :
