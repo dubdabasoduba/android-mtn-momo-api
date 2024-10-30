@@ -26,7 +26,7 @@
         </activity>
 
         <activity
-            android:name=".activity.AppMainActivity"
+            android:name=".views.AppMainActivity"
             android:exported="true"
             android:theme="@style/Theme.MTNMomoAPI.NoActionBar" />
     </application>

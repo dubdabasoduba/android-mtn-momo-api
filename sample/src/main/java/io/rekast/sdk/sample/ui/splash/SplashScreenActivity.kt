@@ -22,9 +22,9 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ExperimentalMaterialApi
 import dagger.hilt.android.AndroidEntryPoint
-import io.rekast.sdk.sample.activity.AppMainActivity
 import io.rekast.sdk.sample.ui.theme.AppTheme
 import io.rekast.sdk.sample.utils.applyWindowInsetListener
+import io.rekast.sdk.sample.views.AppMainActivity
 
 @OptIn(ExperimentalMaterialApi::class)
 @AndroidEntryPoint

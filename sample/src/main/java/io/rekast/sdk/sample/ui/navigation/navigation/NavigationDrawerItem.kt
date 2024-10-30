@@ -24,7 +24,7 @@ sealed class NavigationDrawerItem(
     var title: String
 ) {
     object Home : NavigationDrawerItem(
-        R.id.mainScreenFragment,
+        R.id.homeScreenFragment,
         R.drawable.home,
         Constants.NavigationTitle.HOME
     )

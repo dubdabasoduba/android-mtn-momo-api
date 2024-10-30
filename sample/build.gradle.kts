@@ -1,4 +1,7 @@
+import org.gradle.kotlin.dsl.android
+
 plugins {
+    id("kotlin-kapt")
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
@@ -33,7 +36,7 @@ android {
     defaultConfig {
         applicationId = "io.rekast.sdk.sample"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "0.0.1"
         vectorDrawables.useSupportLibrary = true
@@ -67,17 +70,15 @@ android {
             applicationIdSuffix = ".debug"
         }
         release {
-            isShrinkResources = true
-            isMinifyEnabled = true
+            isShrinkResources = false
+            isMinifyEnabled = false
         }
     }
 }
 
 composeCompiler {
     reportsDestination = layout.buildDirectory.dir("compose_compiler")
-    stabilityConfigurationFiles.addAll(
-        rootProject.layout.projectDirectory.file("stability_config.conf")
-    )
+    stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
 }
 
 kapt {
@@ -99,8 +100,10 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     implementation(libs.androidx.lifecycle.service)
     implementation(libs.androidx.lifecycle.process)
+    implementation(libs.androidx.lifecycle.viewmodel.android)
     kapt(libs.androidx.lifecycle.lifecycle.compiler)
     implementation(libs.androidx.lifecycle.reactivestreams.ktx)
+    implementation(libs.work.runtime.ktx)
 
     implementation(libs.androidx.appcompat)
     implementation(libs.google.android.material)

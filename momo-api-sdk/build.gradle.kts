@@ -1,9 +1,6 @@
 import com.vanniktech.maven.publish.SonatypeHost
-import org.gradle.kotlin.dsl.hilt
 
 plugins {
-    id("maven-publish")
-    id("signing")
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dagger.hilt.android)
@@ -11,7 +8,8 @@ plugins {
     alias(libs.plugins.secrets)
     alias(libs.plugins.vanniktech.maven.publish)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.compose.compiler)
+    id("maven-publish")
+    id("signing")
 }
 
 android {
@@ -59,7 +57,6 @@ android {
             // Debug-specific configurations
         }
         release {
-            isMinifyEnabled = true
             // Release-specific configurations
         }
     }
