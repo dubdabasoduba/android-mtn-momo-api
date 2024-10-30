@@ -15,19 +15,12 @@
  */
 package io.rekast.sdk.sample.views.collection.pay
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DrawerValue
-import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberDrawerState
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
@@ -47,32 +40,33 @@ import io.rekast.sdk.sample.utils.hookSnackBar
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlin.let
 
-@Composable
+@androidx.compose.runtime.Composable
 fun CollectionScreen(
     navController: NavController?,
     snackStateFlow: SharedFlow<SnackBarComponentConfiguration>,
     showProgressBar: Boolean = false,
     collectionPayScreenViewModel: CollectionPayScreenViewModel?,
-    momoTransaction: MutableLiveData<MomoTransaction?>
+    momoTransaction: androidx.lifecycle.MutableLiveData<MomoTransaction?>
 ) {
-    val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
-    val scope = rememberCoroutineScope()
+    val scaffoldState = androidx.compose.material.rememberScaffoldState(androidx.compose.material.rememberDrawerState(DrawerValue.Closed))
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
     val snackBarTheme = SnackBarThemeOptions()
 
-    LaunchedEffect(Unit) {
+    androidx.compose.runtime.LaunchedEffect(Unit) {
         snackStateFlow.hookSnackBar(scaffoldState)
     }
 
-    Scaffold(
+    androidx.compose.material.Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopBar(scope = scope, scaffoldState = scaffoldState, title = R.string.collections_pay_screen) },
-        drawerBackgroundColor = colorResource(id = R.color.accent_secondary),
+        topBar = { TopBar(scope = scope, scaffoldState = scaffoldState, title = io.rekast.sdk.sample.R.string.collections_pay_screen) },
+        drawerBackgroundColor = androidx.compose.ui.res.colorResource(id = io.rekast.sdk.sample.R.color.accent_secondary),
         drawerContent = {
             navController?.let { Drawer(scope = scope, scaffoldState = scaffoldState, navController = it) }
         },
         drawerGesturesEnabled = true,
-        backgroundColor = colorResource(id = R.color.white),
+        backgroundColor = androidx.compose.ui.res.colorResource(id = io.rekast.sdk.sample.R.color.white),
         snackbarHost = { snackBarHostState ->
             SnackBarComponent(
                 snackBarHostState = snackBarHostState,
@@ -82,7 +76,7 @@ fun CollectionScreen(
             )
         }
     ) { padding ->
-        Box(modifier = Modifier.padding(padding)) {
+        androidx.compose.foundation.layout.Box(modifier = Modifier.padding(padding)) {
             if (!showProgressBar) {
                 collectionPayScreenViewModel?.let {
                     val phoneNumber by collectionPayScreenViewModel.phoneNumber.observeAsState(Constants.EMPTY_STRING)
@@ -93,7 +87,7 @@ fun CollectionScreen(
                     val deliveryNote by collectionPayScreenViewModel.deliveryNote.observeAsState(Constants.EMPTY_STRING)
                     val referenceIdToRefund by collectionPayScreenViewModel.referenceIdToRefund.observeAsState(Constants.EMPTY_STRING)
 
-                    if (momoTransaction.value == null) {
+                    if (androidx.lifecycle.LiveData.getValue MomoTransaction null) {
                         PaymentDataScreenComponent(
                             title = stringResource(id = R.string.request_to_pay_title),
                             submitButtonText = stringResource(id = R.string.request_payment_submit_button),
