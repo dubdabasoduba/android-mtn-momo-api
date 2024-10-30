@@ -87,7 +87,7 @@ fun CollectionScreen(
                     val deliveryNote by collectionPayScreenViewModel.deliveryNote.observeAsState(Constants.EMPTY_STRING)
                     val referenceIdToRefund by collectionPayScreenViewModel.referenceIdToRefund.observeAsState(Constants.EMPTY_STRING)
 
-                    if (androidx.lifecycle.LiveData.getValue MomoTransaction null) {
+                    if (momoTransaction.value == null) {
                         PaymentDataScreenComponent(
                             title = stringResource(id = R.string.request_to_pay_title),
                             submitButtonText = stringResource(id = R.string.request_payment_submit_button),

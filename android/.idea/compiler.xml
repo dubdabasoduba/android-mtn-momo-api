@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="MTN_Momo_API_SDK.momo-api-sdk" target="21" />
+      <module name="MTN_Momo_API_SDK.sample" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
