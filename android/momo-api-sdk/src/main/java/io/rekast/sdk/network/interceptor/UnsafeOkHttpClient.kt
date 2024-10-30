@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.network.Interceptor
+package io.rekast.sdk.network.interceptor
 
 import android.annotation.SuppressLint
 import java.security.SecureRandom

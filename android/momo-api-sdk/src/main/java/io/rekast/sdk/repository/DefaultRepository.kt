@@ -26,9 +26,9 @@ import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.User
 import io.rekast.sdk.model.authentication.UserKey
 import io.rekast.sdk.network.service.AuthenticationService
+import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.network.service.products.CommonService
 import io.rekast.sdk.network.service.products.DisbursementsService
-import io.rekast.sdk.network.service.products.CollectionService
 import javax.inject.Inject
 import javax.inject.Singleton
 import okhttp3.ResponseBody

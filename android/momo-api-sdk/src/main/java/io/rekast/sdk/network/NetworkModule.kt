@@ -22,11 +22,15 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.rekast.sdk.BuildConfig
-import io.rekast.sdk.network.Interceptor.UnsafeOkHttpClient
+import io.rekast.sdk.model.authentication.AccessTokenCredentials
+import io.rekast.sdk.model.authentication.BasicAuthCredentials
+import io.rekast.sdk.network.interceptor.AccessToken
+import io.rekast.sdk.network.interceptor.BasicAuthentication
+import io.rekast.sdk.network.interceptor.UnsafeOkHttpClient
 import io.rekast.sdk.network.service.AuthenticationService
+import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.network.service.products.CommonService
 import io.rekast.sdk.network.service.products.DisbursementsService
-import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.utils.Settings
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -50,7 +54,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun getMomoCollection(retrofit: Retrofit): CollectionService =
+    fun getCollection(retrofit: Retrofit): CollectionService =
         retrofit.create(CollectionService::class.java)
 
     @Provides
@@ -76,6 +80,14 @@ object NetworkModule {
             .client(okHttpClient)
             .build()
     }
+
+    @Singleton
+    @Provides
+    fun provideBasicAuthInterceptor(basicAuthCredentials: BasicAuthCredentials): BasicAuthentication = BasicAuthentication(basicAuthCredentials)
+
+    @Singleton
+    @Provides
+    fun provideAccessTokenInterceptor(accessTokenCredentials: AccessTokenCredentials): AccessToken = AccessToken(accessTokenCredentials)
 
     @Provides
     @Singleton
