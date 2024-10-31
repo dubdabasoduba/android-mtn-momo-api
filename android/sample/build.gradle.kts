@@ -126,6 +126,8 @@ dependencies {
     implementation(libs.androidx.hilt.work)
     kapt(libs.hilt.android.compiler)
 
+    implementation(libs.dokka.base)
+
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.fragment)
