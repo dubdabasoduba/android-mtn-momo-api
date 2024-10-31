@@ -83,8 +83,6 @@ jobs:
       - name: Document modules with dokka
         run: ./gradlew dokkaHtmlMultiModule
         working-directory: android
-        with:
-         ssh-key: ${{ secrets.DEPLOY_KEY }}
 
       - name: Deploy 🚀
         if: ${{ github.event_name == 'push' }}
@@ -93,3 +91,4 @@ jobs:
           branch: gh-pages # The branch the action should deploy to.
           folder: android/build/dokka # The folder the action should deploy.
           target-folder: dokka
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
