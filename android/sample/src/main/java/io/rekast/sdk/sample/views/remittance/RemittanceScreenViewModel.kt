@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import io.rekast.sdk.model.api.MomoTransaction
+import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.sample.utils.Constants
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration

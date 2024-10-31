@@ -15,11 +15,11 @@
  */
 package io.rekast.sdk.network.service.products
 
-import io.rekast.sdk.model.api.AccountBalance
-import io.rekast.sdk.model.api.BasicUserInfo
-import io.rekast.sdk.model.api.MomoNotification
-import io.rekast.sdk.model.api.MomoTransaction
-import io.rekast.sdk.model.api.UserInfoWithConsent
+import io.rekast.sdk.model.AccountBalance
+import io.rekast.sdk.model.BasicUserInfo
+import io.rekast.sdk.model.MomoNotification
+import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.UserInfoWithConsent
 import io.rekast.sdk.utils.MomoConstants
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -43,7 +43,7 @@ sealed interface CommonService {
      * @return[AccountBalance] -- Returns the Account Balance
      */
     @GET(MomoConstants.EndPoints.GET_ACCOUNT_BALANCE)
-    fun getAccountBalance(
+    suspend fun getAccountBalance(
         @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
@@ -51,15 +51,15 @@ sealed interface CommonService {
     ): Response<AccountBalance>
 
     /**
-     * Makes a request to get the Basic User Info
+     * Makes a request to get the Basic ApiUser Info
      * @param[productType] -- The API Products ([MomoConstants.ProductTypes])
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[environment] -- The API environment (X-Target-Environment)
-     * @return[BasicUserInfo] -- Returns the Basic User Info
+     * @return[BasicUserInfo] -- Returns the Basic ApiUser Info
      */
     @GET(MomoConstants.EndPoints.GET_BASIC_USER_INFO)
-    fun getBasicUserInfo(
+    suspend fun getBasicUserInfo(
         @Path(MomoConstants.EndpointPaths.ACCOUNT_HOLDER_ID) accountHolder: String,
         @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
@@ -68,15 +68,15 @@ sealed interface CommonService {
     ): Response<BasicUserInfo>
 
     /**
-     * Makes a request to get the User Info with Consent
+     * Makes a request to get the ApiUser Info with Consent
      * @param[productType] -- The API Products ([MomoConstants.ProductTypes])
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productSubscriptionKey] -- The Product subscription Key (Ocp-Apim-Subscription-Key)
      * @param[environment] -- The API environment (X-Target-Environment)
-     * @return[UserInfoWithConsent] -- Returns the User Info with Consent
+     * @return[UserInfoWithConsent] -- Returns the ApiUser Info with Consent
      */
     @GET(MomoConstants.EndPoints.GET_USER_INFO_WITH_CONSENT)
-    fun getUserInfoWithConsent(
+    suspend fun getUserInfoWithConsent(
         @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
@@ -84,7 +84,7 @@ sealed interface CommonService {
     ): Response<UserInfoWithConsent>
 
     /**
-     * Makes a request to get the User Info with Consent
+     * Makes a request to get the ApiUser Info with Consent
      * @param[momoTransaction] -- This is the Transfer Payload [MomoTransaction]
      * @param[apiVersion] -- The app Version (v1_0 or v2_0)
      * @param[productType] -- The API Products ([MomoConstants.ProductTypes])
@@ -93,7 +93,7 @@ sealed interface CommonService {
      * @return[Unit] -- Returns the Transfer Status
      */
     @POST(MomoConstants.EndPoints.TRANSFER)
-    fun transfer(
+    suspend fun transfer(
         @Body momoTransaction: MomoTransaction,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
@@ -103,7 +103,7 @@ sealed interface CommonService {
     ): Response<Unit>
 
     /**
-     * Makes a request to get the User Info with Consent
+     * Makes a request to get the ApiUser Info with Consent
      * @param[referenceId] -- The Transfer Reference ID. This is a UUID V4.
      * This is the ID used here [transfer]
      * @param[productType] -- The API Products ([MomoConstants.ProductTypes])
@@ -113,7 +113,7 @@ sealed interface CommonService {
      * @return[ResponseBody] -- Returns the Transfer Status
      */
     @GET(MomoConstants.EndPoints.GET_TRANSFER_STATUS)
-    fun getTransferStatus(
+    suspend fun getTransferStatus(
         @Path(MomoConstants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
@@ -135,7 +135,7 @@ sealed interface CommonService {
      * @return[ResponseBody] -- Returns the Transfer Status
      */
     @POST(MomoConstants.EndPoints.REQUEST_TO_PAY_DELIVERY_NOTIFICATION)
-    fun requestToPayDeliveryNotification(
+    suspend fun requestToPayDeliveryNotification(
         @Body momoNotification: MomoNotification,
         @Path(MomoConstants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
@@ -156,7 +156,7 @@ sealed interface CommonService {
      * @return[ResponseBody] -- Returns the Transfer Status
      */
     @GET(MomoConstants.EndPoints.VALIDATE_ACCOUNT_HOLDER_STATUS)
-    fun validateAccountHolderStatus(
+    suspend fun validateAccountHolderStatus(
         @Path(MomoConstants.EndpointPaths.ACCOUNT_HOLDER_ID) accountHolderId: String,
         @Path(MomoConstants.EndpointPaths.ACCOUNT_HOLDER_TYPE) accountHolderType: String,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
@@ -175,7 +175,7 @@ sealed interface CommonService {
      * @return[AccountBalance] -- Returns the Account Balance
      */
     @GET(MomoConstants.EndPoints.GET_ACCOUNT_BALANCE_IN_SPECIFIC_CURRENCY)
-    fun getAccountBalanceInSpecificCurrency(
+    suspend fun getAccountBalanceInSpecificCurrency(
         @Path(MomoConstants.EndpointPaths.CURRENCY) currency: String,
         @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,

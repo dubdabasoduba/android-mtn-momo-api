@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.model.authentication
+package io.rekast.sdk.model.authentication.credentials
 
-import com.google.gson.annotations.SerializedName
-import kotlinx.serialization.Serializable
+import javax.inject.Inject
 
-/**
- * This class represents the MTN MOMO API Key that is received by using the
- * Subscription Key and the API User ID
- */
-@Serializable
-data class UserKey(
-    @SerializedName("apiKey") val apiKey: String
+data class AccessTokenCredentials @Inject constructor(
+    var accessToken: String
 )

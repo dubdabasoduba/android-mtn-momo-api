@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.model.api
+package io.rekast.sdk.model
 
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable

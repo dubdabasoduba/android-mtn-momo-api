@@ -34,9 +34,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
-import io.rekast.sdk.model.api.AccountBalance
-import io.rekast.sdk.model.api.AccountHolderStatus
-import io.rekast.sdk.model.api.BasicUserInfo
+import io.rekast.sdk.model.AccountBalance
+import io.rekast.sdk.model.AccountHolderStatus
+import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.accountdetails.AccountStatusComponent
 import io.rekast.sdk.sample.ui.components.accountdetails.BasicUserInfoComponent

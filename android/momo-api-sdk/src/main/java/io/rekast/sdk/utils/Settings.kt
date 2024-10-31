@@ -17,7 +17,7 @@ package io.rekast.sdk.utils
 
 import com.google.gson.Gson
 import io.rekast.sdk.BuildConfig
-import io.rekast.sdk.model.api.MomoTransaction
+import io.rekast.sdk.model.MomoTransaction
 import java.util.*
 import javax.inject.Inject
 import okhttp3.ResponseBody
@@ -25,40 +25,45 @@ import org.apache.commons.lang3.StringUtils
 import retrofit2.Response
 
 /**
- * Contains General Settings() used in the library.
+ * Contains general settings used in the library.
+ *
+ * This class provides methods for generating UUIDs, formatting phone numbers,
+ * retrieving product subscription keys, and checking notification message lengths.
  */
 class Settings @Inject constructor() {
 
+    /**
+     * Generates a new UUID as a String.
+     *
+     * @return A randomly generated UUID.
+     */
     fun generateUUID(): String = UUID.randomUUID().toString()
 
     /**
-     * Connection timeout duration
+     * Connection timeout duration in milliseconds.
      */
     val CONNECT_TIMEOUT: Long = 60 * 1000
 
     /**
-     * Connection Read timeout duration
+     * Connection read timeout duration in milliseconds.
      */
     val READ_TIMEOUT: Long = 60 * 1000
 
     /**
-     * Connection write timeout duration
+     * Connection write timeout duration in milliseconds.
      */
     val WRITE_TIMEOUT: Long = 60 * 1000
 
     /**
-     * The MSISDN sending the funds
+     * Formats the phone number based on the provided country code.
      *
-     * @param [phoneNumber] The Phonenumber the money is sent to.
-     * @param [countryCode] The country code the Money is to be sent from.
-     * @return a formatted String
+     * @param phoneNumber The phone number to format.
+     * @param countryCode The country code to prepend if the phone number starts with "0".
+     * @return A formatted phone number as a String, or null if the input is blank.
      */
     fun formatPhoneNumber(phoneNumber: String, countryCode: String): String? {
         if (phoneNumber.isBlank()) return null
         if (phoneNumber.length < 11 && phoneNumber.startsWith("0")) {
-            // here we can just remove the inline variable instead of the p. Like you did with the rest
-            // String p = phoneNumber.replaceFirst("^0", "254");
-            // return p
             return phoneNumber.replaceFirst("^0".toRegex(), countryCode)
         }
         return if (phoneNumber.length == 13 && phoneNumber.startsWith("+")) {
@@ -69,9 +74,10 @@ class Settings @Inject constructor() {
     }
 
     /**
-     * @param [productType] this is the MTN MOMO API product of choice
-     * Return the [productKey] based on the [productType]. It gets the product keys defined on the `local.properties` file.
-     * It gets them through the [BuildConfig] generated file.
+     * Retrieves the product subscription keys based on the specified product
+     *
+     * @param productType The MTN MOMO API product type.
+     * @return The corresponding product key as a String.
      */
     fun getProductSubscriptionKeys(productType: ProductType): String {
         val productKey: String = when (productType) {
@@ -100,11 +106,24 @@ class Settings @Inject constructor() {
         return productKey
     }
 
+    /**
+     * Generates a MomoTransaction object from the given response.
+     *
+     * @param response The response containing the transaction data.
+     * @return A MomoTransaction object, or null if the response body is empty.
+     */
     fun generateTransactionFromResponse(response: Response<ResponseBody?>): MomoTransaction? {
         val data: String = response.body()!!.source().readUtf8()
         return Gson().fromJson(data, MomoTransaction::class.java)
     }
 
+    /**
+     * Checks if the length of the notification message is within the allowed limit.
+     *
+     * @param notificationMessage The notification message to check.
+     * @param notificationMessageMaxLength The maximum allowed length for the notification message.
+     * @return True if the message length is within the limit, false otherwise.
+     */
     fun checkNotificationMessageLength(
         notificationMessage: String?,
         notificationMessageMaxLength: Long = MomoConstants.NOTIFICATION_MESSAGE_LENGTH

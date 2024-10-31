@@ -15,6 +15,9 @@
  */
 package io.rekast.sdk.sample.utils
 
+/**
+ * Contains constant values used throughout the MTN MOMO SDK sample application.
+ */
 object Constants {
     object NavigationTitle {
         const val HOME = "Home"

@@ -15,8 +15,24 @@
  */
 package io.rekast.sdk.utils
 
+/**
+ * Enum class representing the different types of account holders in the MTN MOMO system.
+ *
+ * @property accountHolderType The string representation of the account holder type.
+ */
 enum class AccountHolderType(val accountHolderType: String) {
+    /**
+     * Represents a mobile number as the account holder type.
+     */
     MSISDN("msisdn"),
+
+    /**
+     * Represents an email address as the account holder type.
+     */
     EMAIL("email"),
+
+    /**
+     * Represents a party code as the account holder type.
+     */
     PARTY_CODE("party_code")
 }

@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.MutableLiveData
-import io.rekast.sdk.model.api.AccountBalance
+import io.rekast.sdk.model.AccountBalance
 import io.rekast.sdk.sample.R
 
 @Composable

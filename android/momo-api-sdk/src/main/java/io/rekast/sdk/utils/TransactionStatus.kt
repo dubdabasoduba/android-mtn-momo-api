@@ -15,6 +15,24 @@
  */
 package io.rekast.sdk.utils
 
+/**
+ * Enum class representing the possible statuses of a transaction in the MTN MOMO system.
+ *
+ * Each constant corresponds to a specific state of a transaction.
+ */
 enum class TransactionStatus {
-    SUCCESSFUL, PENDING, FAILED
+    /**
+     * Indicates that the transaction was successful.
+     */
+    SUCCESSFUL,
+
+    /**
+     * Indicates that the transaction is currently pending.
+     */
+    PENDING,
+
+    /**
+     * Indicates that the transaction has failed.
+     */
+    FAILED
 }

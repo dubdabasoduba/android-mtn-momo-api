@@ -13,12 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.model.api
+package io.rekast.sdk.model.authentication
 
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
+/**
+ * This class represents the MTN MOMO API ApiUser.
+ *
+ * @property providerCallbackHost The callback host for the provider.
+ * @property targetEnvironment The target environment for the API.
+ */
 @Serializable
-data class AccountHolderStatus(
-    @SerializedName("result") var result: Boolean
+data class ApiUser(
+    @SerializedName("providerCallbackHost") val providerCallbackHost: String? = null,
+    @SerializedName("targetEnvironment") val targetEnvironment: String? = null
 )

@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.model.api
+package io.rekast.sdk.model.authentication.credentials
 
-import com.google.gson.annotations.SerializedName
-import kotlinx.serialization.Serializable
+import javax.inject.Inject
 
-@Serializable
-data class ErrorResponse(
-    @SerializedName("code") var code: String,
-    @SerializedName("message") var message: String,
-    @SerializedName("error") var error: String
+/**
+ * Data class representing Basic Authentication credentials.
+ *
+ * @param apiUserId The API user ID.
+ * @param apiKey The API key.
+ */
+data class BasicAuthCredentials @Inject constructor(
+    var apiUserId: String,
+    var apiKey: String
 )

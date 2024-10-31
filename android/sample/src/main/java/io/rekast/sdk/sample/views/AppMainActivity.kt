@@ -29,14 +29,26 @@ import javax.inject.Inject
 import kotlin.getValue
 import kotlinx.coroutines.launch
 
+/**
+ * Main activity for the MTN MOMO SDK sample application.
+ *
+ * This activity sets up the navigation host and initializes the main view model.
+ */
 @AndroidEntryPoint
 @ExperimentalMaterialApi
-open class AppMainActivity() : AppCompatActivity() {
+open class AppMainActivity : AppCompatActivity() {
     @Inject
     lateinit var dispatcherProvider: DefaultDispatcherProvider
     lateinit var navHostFragment: NavHostFragment
     private val appMainViewModel by viewModels<AppMainViewModel>()
 
+    /**
+     * Called when the activity is created.
+     *
+     * This method initializes the navigation host and sets up the fragment manager.
+     *
+     * @param savedInstanceState The saved instance state bundle.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(FragmentContainerView(this).apply { id = R.id.navigation_host })
@@ -50,6 +62,11 @@ open class AppMainActivity() : AppCompatActivity() {
             .commit()
     }
 
+    /**
+     * Called when the activity is resumed.
+     *
+     * This method checks the user status by invoking the checkUser method in the view model.
+     */
     override fun onResume() {
         super.onResume()
         appMainViewModel.viewModelScope.launch(dispatcherProvider.io()) { appMainViewModel.checkUser() }

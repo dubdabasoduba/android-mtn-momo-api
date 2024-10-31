@@ -17,7 +17,7 @@ plugins {
 
 android {
     namespace = "io.rekast.sdk.sample"
-    compileSdk = 34
+    compileSdk = 35
 
     buildFeatures {
         dataBinding = true
@@ -139,6 +139,9 @@ dependencies {
 
     implementation(libs.jakewharton.timber)
     implementation(libs.apache.commons.lang3)
+
+    implementation(libs.kotlinx.coroutines)
+    implementation(libs.retrofit.coroutines)
 
     debugImplementation(libs.chuckerteam.chucker)
 

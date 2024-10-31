@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.model.api
+package io.rekast.sdk.model
 
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AccountHolder(
-    @SerializedName("partyIdType") var partyIdType: String,
-    @SerializedName("partyId") var partyId: String
+data class ErrorResponse(
+    @SerializedName("code") var code: String,
+    @SerializedName("message") var message: String,
+    @SerializedName("error") var error: String
 )

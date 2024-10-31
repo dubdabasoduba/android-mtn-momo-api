@@ -19,7 +19,11 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 /**
- * AccessToken Data Class.
+ * Data class representing an access token received from the MTN MOMO API.
+ *
+ * @property accessToken The access token as a String.
+ * @property tokenType The type of the token (e.g., Bearer).
+ * @property expiresIn The duration in which the token expires.
  */
 @Serializable
 data class AccessToken(

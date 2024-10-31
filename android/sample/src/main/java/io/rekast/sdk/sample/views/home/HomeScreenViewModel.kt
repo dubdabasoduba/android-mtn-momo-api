@@ -21,9 +21,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import io.rekast.sdk.model.api.AccountBalance
-import io.rekast.sdk.model.api.AccountHolderStatus
-import io.rekast.sdk.model.api.BasicUserInfo
+import io.rekast.sdk.model.AccountBalance
+import io.rekast.sdk.model.AccountHolderStatus
+import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import javax.inject.Inject
@@ -61,7 +61,7 @@ class HomeScreenViewModel @Inject constructor(private val defaultRepository: Def
                             showProgressBar.postValue(false)
 
                             emitSnackBarState(
-                                SnackBarComponentConfiguration(message = "Basic User info fetched successfully")
+                                SnackBarComponentConfiguration(message = "Basic ApiUser info fetched successfully")
                             )
                         }
                         is MomoResponse.Failure -> {
@@ -70,7 +70,7 @@ class HomeScreenViewModel @Inject constructor(private val defaultRepository: Def
 
                             emitSnackBarState(
                                 SnackBarComponentConfiguration(
-                                    message = "${momoAPIException!!.message} " + "Basic User" +
+                                    message = "${momoAPIException!!.message} " + "Basic ApiUser" +
                                         " info not fetched! Please try again"
                                 )
                             )

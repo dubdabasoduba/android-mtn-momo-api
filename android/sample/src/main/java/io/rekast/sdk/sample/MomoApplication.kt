@@ -19,11 +19,22 @@ import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
+/**
+ * The main application class for the MTN MOMO SDK sample application.
+ *
+ * This class initializes the application and sets up dependency injection using Dagger Hilt.
+ * It also configures Timber for logging in debug builds.
+ */
 @HiltAndroidApp
 class MomoApplication : Application() {
 
+    /**
+     * Called when the application is starting, before any activity, service, or receiver
+     * objects have been created. This is where you can perform application-wide initialization.
+     */
     override fun onCreate() {
         super.onCreate()
+        // Initialize Timber for logging in debug mode
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }

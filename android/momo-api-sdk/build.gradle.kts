@@ -13,7 +13,7 @@ plugins {
 }
 
 android {
-    compileSdk = 34 // Update this to match your project's compileSdkVersion
+    compileSdk = 35
 
     buildFeatures {
         dataBinding = true
@@ -30,7 +30,7 @@ android {
     }
 
     defaultConfig {
-        minSdk = 24 // Update this to match your project's minSdkVersion
+        minSdk = 24
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -80,6 +80,9 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.jakewharton.timber)
 
+    implementation(libs.kotlinx.coroutines)
+    implementation(libs.retrofit.coroutines)
+
     implementation(libs.google.dagger.hilt)
     implementation(libs.androidx.hilt.work)
     kapt(libs.hilt.android.compiler)
@@ -89,6 +92,7 @@ dependencies {
 
     // debug
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
 }
 
 mavenPublishing {

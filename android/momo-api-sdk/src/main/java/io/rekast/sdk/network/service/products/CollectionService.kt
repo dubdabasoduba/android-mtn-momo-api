@@ -15,7 +15,7 @@
  */
 package io.rekast.sdk.network.service.products
 
-import io.rekast.sdk.model.api.MomoTransaction
+import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.utils.MomoConstants
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -39,7 +39,7 @@ sealed interface CollectionService : CommonService {
      * @return[Unit] -- Returns the Transfer Status
      */
     @POST(MomoConstants.EndPoints.REQUEST_TO_PAY)
-    fun requestToPay(
+    suspend fun requestToPay(
         @Body momoTransaction: MomoTransaction,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
@@ -57,7 +57,7 @@ sealed interface CollectionService : CommonService {
      * @return[ResponseBody] -- Returns the Transfer Status
      */
     @GET(MomoConstants.EndPoints.REQUEST_TO_PAY_STATUS)
-    fun requestToPayTransactionStatus(
+    suspend fun requestToPayTransactionStatus(
         @Path(MomoConstants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
@@ -73,7 +73,7 @@ sealed interface CollectionService : CommonService {
      * @return[Unit] -- Returns the Transfer Status
      */
     @POST(MomoConstants.EndPoints.REQUEST_TO_WITHDRAW)
-    fun requestToWithdraw(
+    suspend fun requestToWithdraw(
         @Body momoTransaction: MomoTransaction,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
@@ -91,7 +91,7 @@ sealed interface CollectionService : CommonService {
      * @return[ResponseBody] -- Returns the Transfer Status
      */
     @GET(MomoConstants.EndPoints.REQUEST_TO_WITHDRAW_STATUS)
-    fun requestToWithdrawTransactionStatus(
+    suspend fun requestToWithdrawTransactionStatus(
         @Path(MomoConstants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,

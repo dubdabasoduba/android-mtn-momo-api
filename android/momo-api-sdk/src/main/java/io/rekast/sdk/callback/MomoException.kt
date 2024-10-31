@@ -15,14 +15,28 @@
  */
 package io.rekast.sdk.callback
 
-import io.rekast.sdk.model.api.ErrorResponse
+import io.rekast.sdk.model.ErrorResponse
 
 /**
  * Handles exceptions and messages for the exceptions.
+ *
+ * @property errorResponse The error response associated with the exception.
  */
 class MomoException : Exception {
     lateinit var errorResponse: ErrorResponse
+
+    /**
+     * Constructor for MomoException with a message.
+     *
+     * @param message The message associated with the exception.
+     */
     constructor(message: String?) : super(message)
+
+    /**
+     * Constructor for MomoException with an ErrorResponse.
+     *
+     * @param errorResponse The error response associated with the exception.
+     */
     constructor(errorResponse: ErrorResponse) : super("${errorResponse.code} : ${errorResponse.message}") {
         this.errorResponse = errorResponse
     }

@@ -15,7 +15,7 @@
  */
 package io.rekast.sdk.network.service.products
 
-import io.rekast.sdk.model.api.MomoTransaction
+import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.utils.MomoConstants
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -39,7 +39,7 @@ sealed interface DisbursementsService : CommonService {
      * @return[Unit] -- Returns the Transfer Status
      */
     @POST(MomoConstants.EndPoints.DEPOSIT)
-    fun deposit(
+    suspend fun deposit(
         @Body momoTransaction: MomoTransaction,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
@@ -57,7 +57,7 @@ sealed interface DisbursementsService : CommonService {
      * @return[ResponseBody] -- Returns the Transfer Status
      */
     @GET(MomoConstants.EndPoints.DEPOSIT_STATUS)
-    fun getDepositStatus(
+    suspend fun getDepositStatus(
         @Path(MomoConstants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
@@ -73,7 +73,7 @@ sealed interface DisbursementsService : CommonService {
      * @return[Unit] -- Returns the Transfer Status
      */
     @POST(MomoConstants.EndPoints.REFUND)
-    fun refund(
+    suspend fun refund(
         @Body momoTransaction: MomoTransaction,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
@@ -91,7 +91,7 @@ sealed interface DisbursementsService : CommonService {
      * @return[ResponseBody] -- Returns the Transfer Status
      */
     @GET(MomoConstants.EndPoints.REFUND_STATUS)
-    fun getRefundStatus(
+    suspend fun getRefundStatus(
         @Path(MomoConstants.EndpointPaths.REFERENCE_ID) referenceId: String,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,

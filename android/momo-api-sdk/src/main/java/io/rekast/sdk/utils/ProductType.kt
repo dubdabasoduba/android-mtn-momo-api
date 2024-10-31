@@ -15,8 +15,24 @@
  */
 package io.rekast.sdk.utils
 
+/**
+ * Enum class representing the different product types available in the MTN MOMO system.
+ *
+ * @property productType The string representation of the product type.
+ */
 enum class ProductType(val productType: String) {
+    /**
+     * Represents the collection product type.
+     */
     COLLECTION("collection"),
+
+    /**
+     * Represents the disbursements product type.
+     */
     DISBURSEMENTS("disbursements"),
+
+    /**
+     * Represents the remittance product type.
+     */
     REMITTANCE("remittance")
 }

@@ -32,7 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
-import io.rekast.sdk.model.api.MomoTransaction
+import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.sample.R
 import io.rekast.sdk.sample.ui.components.general.CircularProgressBarComponent
 import io.rekast.sdk.sample.ui.components.general.SnackBarComponent

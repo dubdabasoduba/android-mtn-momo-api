@@ -19,10 +19,12 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 /**
- * This class represents the MTN MOMO API User
+ * This class represents the MTN MOMO API Key that is received by using the
+ * Subscription Key and the API ApiUser ID.
+ *
+ * @property apiKey The API key as a String.
  */
 @Serializable
-data class User(
-    @SerializedName("providerCallbackHost") val providerCallbackHost: String? = null,
-    @SerializedName("targetEnvironment") val targetEnvironment: String? = null
+data class ApiKey(
+    @SerializedName("apiKey") val apiKey: String? = null
 )

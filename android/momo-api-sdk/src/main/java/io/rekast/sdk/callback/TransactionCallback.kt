@@ -16,8 +16,8 @@
 package io.rekast.sdk.callback
 
 import com.google.gson.GsonBuilder
-import io.rekast.sdk.model.api.ErrorResponse
-import io.rekast.sdk.model.api.MomoTransaction
+import io.rekast.sdk.model.ErrorResponse
+import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.utils.Settings
 import io.rekast.sdk.utils.TransactionStatus
 import java.io.IOException

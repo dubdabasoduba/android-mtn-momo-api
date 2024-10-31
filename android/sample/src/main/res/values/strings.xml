@@ -14,7 +14,7 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <!--Basic User Information-->
+    <!--Basic ApiUser Information-->
     <string name="basic_user_info_title">Basic User Information:</string>
     <string name="account_status_title">Account Status:</string>
     <string name="account_balance_title">Account Balance:</string>

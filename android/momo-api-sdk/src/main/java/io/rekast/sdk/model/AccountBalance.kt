@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.model.authentication
+package io.rekast.sdk.model
 
-data class BasicAuthCredentials(
-    var apiUserId: String,
-    var apiKey: String
+import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class AccountBalance(
+    @SerializedName("availableBalance") var availableBalance: String,
+    @SerializedName("currency") var currency: String
 )

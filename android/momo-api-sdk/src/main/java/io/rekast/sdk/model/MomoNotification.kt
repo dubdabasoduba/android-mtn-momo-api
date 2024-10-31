@@ -13,8 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.model.authentication
+package io.rekast.sdk.model
 
-data class AccessTokenCredentials(
-    var accessToken: String
+import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
+
+/**
+ * Data class representing a Momo notification.
+ *
+ * @property notificationMessage The message associated with the notification.
+ */
+@Serializable
+data class MomoNotification(
+    @SerializedName("notificationMessage") var notificationMessage: String
 )
