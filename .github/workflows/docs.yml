@@ -2,7 +2,7 @@ name: Docs
 
 on:
   push:
-    branches: [ main ]
+    branches: [ develop ]
 env:
   MAPBOX_SDK_TOKEN: ${{ secrets.MAPBOX_SDK_TOKEN }}
 
