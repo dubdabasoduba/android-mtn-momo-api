@@ -51,3 +51,28 @@ buildscript {
         classpath(libs.navigation.safe.args.gradle.plugin)
     }
 }
+
+tasks.named<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaHtmlMultiModule") {
+    outputDirectory.set(layout.buildDirectory.dir("dokka"))
+}
+
+tasks.register<Copy>("copyDocsToGhPages") {
+    dependsOn("dokkaHtml")
+    from(layout.buildDirectory.dir("dokka"))
+    into(file("docs"))
+}
+
+tasks.register("deployDocs") {
+    dependsOn("copyDocsToGhPages")
+    doLast {
+        exec {
+            commandLine("git", "add", ".")
+        }
+        exec {
+            commandLine("git", "commit", "-m", "Update documentation")
+        }
+        exec {
+            commandLine("git", "push")
+        }
+    }
+}

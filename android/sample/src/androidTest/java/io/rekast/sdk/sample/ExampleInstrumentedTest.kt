@@ -27,7 +27,7 @@ import org.junit.runner.RunWith
 class ExampleInstrumentedTest {
 /*    @Test
     fun useAppContext() {
-        // Context of the app under test.
+        // Context of the sample under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         Assert.assertEquals("com.rekast.momo_api.sample", appContext.packageName)
     }*/
