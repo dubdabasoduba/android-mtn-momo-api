@@ -32,6 +32,7 @@ import io.rekast.sdk.network.interfaces.auth.AuthInterface
 import io.rekast.sdk.network.interfaces.implementation.auth.AuthImplementation
 import io.rekast.sdk.network.service.AuthenticationService
 import io.rekast.sdk.network.service.products.CollectionService
+import io.rekast.sdk.network.service.products.CommonService
 import io.rekast.sdk.network.service.products.DisbursementsService
 import io.rekast.sdk.utils.Settings
 import java.util.concurrent.TimeUnit
@@ -105,6 +106,17 @@ object NetworkModule {
     @Singleton
     fun getDisbursement(retrofit: Retrofit): DisbursementsService =
         retrofit.create(DisbursementsService::class.java)
+
+    /**
+     * Provides an instance of [CommonService].
+     *
+     * @param retrofit The Retrofit instance used to create the service.
+     * @return An instance of [CommonService].
+     */
+    @Provides
+    @Singleton
+    fun getCommonService(retrofit: Retrofit): CommonService =
+        retrofit.create(CommonService::class.java)
 
     /**
      * Provides an instance of [Retrofit].
