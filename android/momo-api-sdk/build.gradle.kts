@@ -1,5 +1,6 @@
 import com.vanniktech.maven.publish.SonatypeHost
 
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -98,4 +99,8 @@ dependencies {
 mavenPublishing {
     publishToMavenCentral(SonatypeHost.S01, true)
     signAllPublications()
+}
+
+tasks.named<org.jetbrains.dokka.gradle.DokkaTaskPartial>("dokkaHtmlPartial") {
+    dependsOn("kaptDebugKotlin", "kaptReleaseKotlin")
 }

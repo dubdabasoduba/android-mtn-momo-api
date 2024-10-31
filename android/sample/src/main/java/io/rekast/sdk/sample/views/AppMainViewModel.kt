@@ -157,6 +157,7 @@ open class AppMainViewModel @Inject constructor(
                                     accessToken.body()
                                 )
                             }
+                            this@AppMainViewModel.setAccessToken(Utils.getAccessToken(context))
                             Timber.d("Access token created and saved successfully")
                         } else {
                             Timber.e("Access token creation failed %s", accessToken?.errorBody()?.string())
@@ -165,6 +166,7 @@ open class AppMainViewModel @Inject constructor(
                     }
                 }
             } else {
+                this@AppMainViewModel.setAccessToken(Utils.getAccessToken(context))
                 Timber.d("A valid access token exists")
             }
         }

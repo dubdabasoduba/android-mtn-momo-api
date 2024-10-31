@@ -175,3 +175,7 @@ dependencies {
 
     releaseImplementation(libs.chuckerteam.chucker.noop)
 }
+
+tasks.named<org.jetbrains.dokka.gradle.DokkaTaskPartial>("dokkaHtmlPartial") {
+    dependsOn("kaptDebugKotlin", "kaptReleaseKotlin")
+}
