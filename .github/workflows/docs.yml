@@ -84,8 +84,8 @@ jobs:
         run: ./gradlew dokkaHtmlMultiModule
         working-directory: android
         env:
-         FHIRCORE_USERNAME: ${{ secrets.GITHUB_USERNAME }}
-         FHIRCORE_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+         folder: site
+         ssh-key: ${{ secrets.DEPLOY_KEY }}
 
       - name: Deploy 🚀
         if: ${{ github.event_name == 'push' }}
