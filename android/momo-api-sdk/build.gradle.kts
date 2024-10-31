@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.androidx.navigation.ui)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.jakewharton.timber)
+    implementation(libs.dokka.base)
 
     implementation(libs.kotlinx.coroutines)
     implementation(libs.retrofit.coroutines)

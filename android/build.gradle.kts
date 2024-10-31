@@ -1,3 +1,6 @@
+import org.jetbrains.dokka.base.DokkaBase
+import org.jetbrains.dokka.base.DokkaBaseConfiguration
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     alias(libs.plugins.android.application) apply false
@@ -46,6 +49,7 @@ allprojects {
 
 buildscript {
     dependencies {
+        classpath(libs.dokka.base)
         classpath(libs.kotlin.gradle.plugin)
         classpath(libs.hilt.android.gradle.plugin)
         classpath(libs.navigation.safe.args.gradle.plugin)
@@ -53,7 +57,13 @@ buildscript {
 }
 
 tasks.named<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaHtmlMultiModule") {
+    moduleName.set("MTN MOMO ANDROID SDK")
+    moduleVersion.set(project.version.toString())
     outputDirectory.set(layout.buildDirectory.dir("dokka"))
+
+    pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
+        footerMessage = "(c) Re.Kast Limited"
+    }
 }
 
 tasks.register<Copy>("copyDocsToGhPages") {

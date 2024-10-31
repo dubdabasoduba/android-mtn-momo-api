@@ -4,7 +4,17 @@ on:
   push:
     branches: [ develop ]
 env:
-  MAPBOX_SDK_TOKEN: ${{ secrets.MAPBOX_SDK_TOKEN }}
+  MOMO_BASE_URL: ${{ secrets.MOMO_BASE_URL }}
+  MOMO_COLLECTION_PRIMARY_KEY: ${{ secrets.MOMO_COLLECTION_PRIMARY_KEY }}
+  MOMO_COLLECTION_SECONDARY_KEY: ${{ secrets.MOMO_COLLECTION_SECONDARY_KEY }}
+  MOMO_REMITTANCE_PRIMARY_KEY: ${{ secrets.MOMO_REMITTANCE_PRIMARY_KEY }}
+  MOMO_REMITTANCE_SECONDARY_KEY: ${{ secrets.MOMO_REMITTANCE_SECONDARY_KEY }}
+  MOMO_DISBURSEMENTS_PRIMARY_KEY: ${{ secrets.MOMO_DISBURSEMENTS_PRIMARY_KEY }}
+  MOMO_DISBURSEMENTS_SECONDARY_KEY: ${{ secrets.MOMO_DISBURSEMENTS_SECONDARY_KEY }}
+  MOMO_API_USER_ID: ${{ secrets.MOMO_API_USER_ID }}
+  MOMO_ENVIRONMENT: ${{ secrets.MOMO_ENVIRONMENT }}
+  MOMO_API_VERSION_V1: ${{ secrets.MOMO_API_VERSION_V1 }}
+  MOMO_API_VERSION_V2: ${{ secrets.MOMO_API_VERSION_V2 }}
 
 jobs:
   build-and-deploy-docusaurus:
@@ -49,6 +59,18 @@ jobs:
       - name: Add empty local.properties
         run: touch local.properties
         working-directory: android
+        run: |
+          echo "MOMO_BASE_URL=${MOMO_BASE_URL}" >> local.properties
+          echo "MOMO_COLLECTION_PRIMARY_KEY=${MOMO_COLLECTION_PRIMARY_KEY}" >> local.properties
+          echo "MOMO_COLLECTION_SECONDARY_KEY=${MOMO_COLLECTION_SECONDARY_KEY}" >> local.properties
+          echo "MOMO_REMITTANCE_PRIMARY_KEY=${MOMO_REMITTANCE_PRIMARY_KEY}" >> local.properties
+          echo "MOMO_REMITTANCE_SECONDARY_KEY=${MOMO_REMITTANCE_SECONDARY_KEY}" >> local.properties
+          echo "MOMO_DISBURSEMENTS_PRIMARY_KEY=${MOMO_DISBURSEMENTS_PRIMARY_KEY}" >> local.properties
+          echo "MOMO_DISBURSEMENTS_SECONDARY_KEY=${MOMO_DISBURSEMENTS_SECONDARY_KEY}" >> local.properties
+          echo "MOMO_API_USER_ID=${MOMO_API_USER_ID}" >> local.properties
+          echo "MOMO_ENVIRONMENT=${MOMO_ENVIRONMENT}" >> local.properties
+          echo "MOMO_API_VERSION_V1=${MOMO_API_VERSION_V1}" >> local.properties
+          echo "MOMO_API_VERSION_V2=${MOMO_API_VERSION_V2}" >> local.properties
 
       - name: Add empty keystore.properties
         run: touch keystore.properties
@@ -62,8 +84,8 @@ jobs:
         run: ./gradlew dokkaHtmlMultiModule
         working-directory: android
         env:
-         FHIRCORE_USERNAME: ${{ secrets.FHIRCORE_USERNAME }}
-         FHIRCORE_ACCESS_TOKEN: ${{ secrets.FHIRCORE_ACCESS_TOKEN }}
+         FHIRCORE_USERNAME: ${{ secrets.GITHUB_USERNAME }}
+         FHIRCORE_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
 
       - name: Deploy 🚀
         if: ${{ github.event_name == 'push' }}
