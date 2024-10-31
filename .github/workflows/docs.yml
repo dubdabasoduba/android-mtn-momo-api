@@ -57,9 +57,8 @@ jobs:
           java-version: 17
 
       - name: Add empty local.properties
-        run: touch local.properties
-        working-directory: android
         run: |
+          touch local.properties
           echo "MOMO_BASE_URL=${MOMO_BASE_URL}" >> local.properties
           echo "MOMO_COLLECTION_PRIMARY_KEY=${MOMO_COLLECTION_PRIMARY_KEY}" >> local.properties
           echo "MOMO_COLLECTION_SECONDARY_KEY=${MOMO_COLLECTION_SECONDARY_KEY}" >> local.properties
@@ -71,6 +70,7 @@ jobs:
           echo "MOMO_ENVIRONMENT=${MOMO_ENVIRONMENT}" >> local.properties
           echo "MOMO_API_VERSION_V1=${MOMO_API_VERSION_V1}" >> local.properties
           echo "MOMO_API_VERSION_V2=${MOMO_API_VERSION_V2}" >> local.properties
+        working-directory: android
 
       - name: Add empty keystore.properties
         run: touch keystore.properties
