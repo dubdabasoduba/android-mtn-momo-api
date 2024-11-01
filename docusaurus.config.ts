@@ -14,15 +14,15 @@ const config: Config = {
   projectName: 'android-mtn-momo-api-sdk',
   onBrokenLinks: 'ignore',
   onBrokenMarkdownLinks: 'warn',
+  staticDirectories: ['static'],
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en']
   },
-
   presets: [
     [
       'classic',
@@ -74,8 +74,8 @@ const config: Config = {
         },
         /*{to: '/blog', label: 'Blog', position: 'left'},*/
         {
-          href: 'https://github.com/facebook/docusaurus',
-          label: 'GitHub',
+          href: 'https://mtn-momo-sdk.rekast.io/dokka/',
+          label: 'SDK & Sample Application KDocs',
           position: 'right',
         },
       ],
@@ -112,13 +112,9 @@ const config: Config = {
         {
           title: 'More',
           items: [
-           /* {
-              label: 'Blog',
-              to: '/blog',
-            },*/
             {
-              label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              label: 'SDK & Sample Application KDocs',
+              href: 'https://mtn-momo-sdk.rekast.io/dokka/',
             },
           ],
         },
