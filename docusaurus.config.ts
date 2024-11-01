@@ -1,24 +1,18 @@
-import {themes as prismThemes} from 'prism-react-renderer';
+import {themes, themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+const lightCodeTheme = themes.github;
+const darkCodeTheme = themes.dracula;
 
 const config: Config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
+  title: 'MTN MOMO Android SDK Documentation',
+  tagline: 'MTN MOMO Android SDK Documentation',
   favicon: 'img/favicon.ico',
-
-  // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
-
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
-
-  onBrokenLinks: 'throw',
+  url: 'https://re-kast.github.io',
+  baseUrl: '/android-mtn-momo-api-sdk/',
+  organizationName: 're-kast',
+  projectName: 'android-mtn-momo-api-sdk',
+  onBrokenLinks: 'ignore',
   onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
@@ -56,7 +50,7 @@ const config: Config = {
           onUntruncatedBlogPosts: 'warn',
         },
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: [require.resolve('./static/css/custom.css')],
         },
       } satisfies Preset.Options,
     ],
@@ -129,11 +123,18 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Re.Kast Limited.`,
     },
     prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
+      theme: lightCodeTheme,
+      darkTheme: darkCodeTheme,
+      additionalLanguages: ['bash', 'diff', 'json'],
+    },
+    algolia: {
+      appId: '80CQ8JPRJC',
+      apiKey: 'aec8155b4175df7f2439fa94cf428f62',
+      indexName: 'momoandroidsdk',
+      searchPagePath: 'search'
     },
   } satisfies Preset.ThemeConfig,
 };
