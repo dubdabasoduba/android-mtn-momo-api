@@ -4,8 +4,8 @@
   <ShortName>MTN MOMO Android SDK Documentation</ShortName>
   <Description>Search MTN MOMO Android SDK Documentation</Description>
   <InputEncoding>UTF-8</InputEncoding>
-  <Image width="16" height="16" type="image/x-icon">https://re-kast.github.io/android-mtn-momo-api-sdk/img/favicon.ico</Image>
-  <Url type="text/html" method="get" template="https://re-kast.github.io/android-mtn-momo-api-sdk/search?q={searchTerms}"/>
-  <Url type="application/opensearchdescription+xml" rel="self" template="https://re-kast.github.io/android-mtn-momo-api-sdk/opensearch.xml" />
-  <moz:SearchForm>https://re-kast.github.io/android-mtn-momo-api-sdk/</moz:SearchForm>
+  <Image width="16" height="16" type="image/x-icon">https://mtn-momo-sdk.rekast.io/img/favicon.ico</Image>
+  <Url type="text/html" method="get" template="https://mtn-momo-sdk.rekast.io/search?q={searchTerms}"/>
+  <Url type="application/opensearchdescription+xml" rel="self" template="https://mtn-momo-sdk.rekast.io/opensearch.xml" />
+  <moz:SearchForm>https://mtn-momo-sdk.rekast.io/</moz:SearchForm>
 </OpenSearchDescription>
