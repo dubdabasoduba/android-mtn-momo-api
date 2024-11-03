@@ -29,7 +29,7 @@ The MTN MOMO API SDK is an Android library designed to simplify the integration 
 - Android Studio Arctic Fox or later
 - Kotlin 1.9.10 or later
 - Minimum SDK version 24
-- Compile SDK version 35
+- Compile SDK version 35 
 
 ### Installation
 
