@@ -5,9 +5,11 @@ sidebar_label: Code Documentation (`Kdocs`)
 
 # Code Documentation (`Kdocs`)
 
-We use [Dokka](https://kotlinlang.org/docs/dokka/overview.html) to generate Kotlin code documentation for the MTN MOMO API SDK. This ensures that all code added to the repository is accompanied by corresponding documentation, enhancing usability and maintainability.
+We utilize [Dokka](https://kotlinlang.org/docs/dokka/overview.html) to generate comprehensive Kotlin code documentation for the MTN MOMO API SDK. This tool ensures that all code added to the repository is accompanied by corresponding documentation, significantly enhancing usability and maintainability for developers.
 
-The generated documentation is automatically deployed to [https://mtn-momo-sdk.rekast.io/](https://mtn-momo-sdk.rekast.io/) via [GitHub Actions](https://github.com/re-kast/android-mtn-momo-api-sdk/blob/de966147f9a240b2bdf0611663a6fd5b05cf21ae/.github/workflows/docs.yml#L48-L94). This CI/CD pipeline ensures that any updates to the documentation are promptly reflected on the website.
+The generated documentation is automatically deployed to [https://mtn-momo-sdk.rekast.io/](https://mtn-momo-sdk.rekast.io/) via [GitHub Actions](https://github.com/re-kast/android-mtn-momo-api-sdk/blob/de966147f9a240b2bdf0611663a6fd5b05cf21ae/.github/workflows/docs.yml#L48-L94). This CI/CD pipeline guarantees that any updates to the documentation are promptly reflected on the website.
+
+You can access the Kdocs directly via this link: [Kdocs Documentation](https://mtn-momo-sdk.rekast.io/dokka/).
 
 ---
 
@@ -68,7 +70,7 @@ build-and-deploy-dokka:
 ### Explanation of Workflow Steps
 
 1. **Checkout the Repository**: The workflow starts by checking out the repository to access the documentation files.
-2. **Set up JDK 17**: It sets up Java Development Kit (JDK) version 17, which is required for building the documentation.
+2. **Set up JDK 17**: It sets up the Java Development Kit (JDK) version 17, which is required for building the documentation.
 3. **Add Local Properties**: Creates a `local.properties` file with necessary environment variables for the build process.
 4. **Add Keystore Properties**: Creates an empty `keystore.properties` file, which may be required for signing the application.
 5. **Grant Execute Permission**: Ensures that the `gradlew` script has execute permissions.
@@ -118,5 +120,6 @@ tasks.named<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaHtmlMultiModu
 - **Dokka Documentation**: For more information on how to use Dokka, refer to the [official documentation](https://kotlinlang.org/docs/dokka/overview.html).
 - **Kotlin Documentation**: Learn more about Kotlin and its features by visiting the [Kotlin documentation](https://kotlinlang.org/docs/home.html).
 - **GitHub Actions Documentation**: For details on automating workflows with GitHub Actions, check out the [GitHub Actions documentation](https://docs.github.com/en/actions).
+- **Continuous Integration (CI) Best Practices**: For insights on best practices in CI, refer to [CI Best Practices](https://www.atlassian.com/continuous-delivery/continuous-integration-best-practices).
 
 By following this documentation, developers can effectively generate and maintain code documentation for the MTN MOMO API SDK, ensuring that it remains accessible and useful for all users.
