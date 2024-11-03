@@ -159,6 +159,9 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
     testImplementation(libs.junit)
+    testImplementation(libs.mockk.core)
+    testImplementation(libs.mockk.inline)
+    testImplementation(libs.mockk.kotlin)
     testImplementation(libs.mockk)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)

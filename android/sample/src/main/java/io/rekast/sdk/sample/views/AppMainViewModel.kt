@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024, Benjamin Mwalimu
+ * Copyright 2023 - 2024, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.rekast.sdk.BuildConfig
+import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.model.ProviderCallBackHost
 import io.rekast.sdk.model.authentication.credentials.AccessTokenCredentials
 import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
@@ -136,7 +137,10 @@ open class AppMainViewModel @Inject constructor(
                                 Timber.d("An Error occurred %s", exception.message)
                             }
                         }
-                        else -> { Timber.e("Api Key creation failed %s", apiKey.message) }
+                        is NetworkResult.Error -> {
+                            Timber.e("Api Key creation failed %s", apiKey.message)
+                        }
+                        else -> { Timber.e("Api Key creation failed") }
                     }
                 }
             }
@@ -233,6 +237,37 @@ open class AppMainViewModel @Inject constructor(
     }
 
 
+        private fun getAccessToken() {
+            viewModelScope.launch {
+                val apiUserKey = context?.let { Utils.getApiKey(it) }
+                val accessToken = context?.let { Utils.getAccessToken(it) }
+                if (StringUtils.isNotBlank(apiUserKey) && StringUtils.isBlank(accessToken)) {
+                    apiUserKey?.let { apiKey ->
+                        defaultRepository.getAccessToken(
+                            Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
+                            apiKey,
+                            ProductType.REMITTANCE.productType
+                        ) { momoAPIResult ->
+                            when (momoAPIResult) {
+                                is MomoResponse.Success -> {
+                                    val generatedAccessToken = momoAPIResult.value
+                                    context?.let { activityContext ->
+                                        Utils.saveAccessToken(
+                                            activityContext,
+                                            generatedAccessToken
+                                        )
+                                    }
+                                }
+                                is MomoResponse.Failure -> {
+                                    val momoAPIException = momoAPIResult.momoException!!
+                                }
+                            }
+                        }
+                    }
+                } else {
+                }
+            }
+        }
 
     /**
      * Requests a refund for a transaction.

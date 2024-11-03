@@ -94,6 +94,9 @@ dependencies {
     releaseImplementation(libs.chuckerteam.chucker.noop)
 
     // debug
+    testImplementation(libs.mockk.core)
+    testImplementation(libs.mockk.inline)
+    testImplementation(libs.mockk.kotlin)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
 }
