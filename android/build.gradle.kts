@@ -1,6 +1,5 @@
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
-import java.io.File
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {

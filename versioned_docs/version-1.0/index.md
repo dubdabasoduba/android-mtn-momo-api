@@ -27,14 +27,7 @@ The MTN MOMO API SDK is an Android library designed to simplify the integration 
 - Comprehensive error handling and logging
 - Secure API communication with proper authentication
 
-## Getting Started
-
-### Prerequisites
-
-- Android Studio Arctic Fox or later
-- Kotlin 1.9.10 or later
-- Minimum SDK version 24
-- Compile SDK version 35
+## Usage
 
 ### Installation
 
@@ -65,16 +58,6 @@ MOMO_ENVIRONMENT="" ## API environment, use sandbox for testing and production f
 MOMO_API_VERSION_V1="" ## The API version for v1 endpoints, use v1_0 for sandbox and v1 for production
 MOMO_API_VERSION_V2="" ## The API version for v2 endpoints, use v2_0 for sandbox and v2 for production
 ```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin AmazingFeature`)
-5. Open a Pull Request
 
 ## License
 

@@ -4,7 +4,7 @@ androidXJUnitTest = "1.1.5"
 androidXTestCore = "1.6.1"
 androidXTestMonitor = "1.6.1"
 appCompat = "1.7.0"
-application = "8.7.1"
+application = "8.7.2"
 arch = "2.2.0"
 chucker = "4.0.0"
 commonsLang3 = "3.14.0"
@@ -20,6 +20,7 @@ customView = "1.2.0-alpha02"
 daggerHilt = "2.51.1" #don't change
 dokka = "1.9.20"
 espresso = "3.6.1"
+foundation = "1.7.5"
 firebase = "33.5.1"
 flowLayout = "0.31.1"
 gradleVersionsPlugin = "0.47.0"
@@ -156,4 +157,5 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
 secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktechMavenPublish" }
 versions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin" }
