@@ -85,6 +85,14 @@ class DefaultRepository @Inject constructor(
         accessTokenCredentialsT.accessToken = accessTokenCredentials.accessToken
     }
 
+    fun getBasicAuth(): BasicAuthCredentials {
+        return basicAuthCredentialsT
+    }
+
+    fun getAccessTokenAuth(): AccessTokenCredentials {
+        return accessTokenCredentialsT
+    }
+
     /**
      * Creates a new API user.
      *
