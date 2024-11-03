@@ -1,4 +1,6 @@
 import org.gradle.kotlin.dsl.android
+import org.jetbrains.dokka.base.DokkaBase
+import org.jetbrains.dokka.base.DokkaBaseConfiguration
 
 plugins {
     id("kotlin-kapt")
@@ -180,4 +182,9 @@ dependencies {
 
 tasks.named<org.jetbrains.dokka.gradle.DokkaTaskPartial>("dokkaHtmlPartial") {
     dependsOn("kaptDebugKotlin", "kaptReleaseKotlin")
+    pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
+        customAssets = listOf(layout.projectDirectory.file("assets/logo-icon.svg").asFile)
+        customStyleSheets = listOf((layout.projectDirectory.file("assets/rekast.css").asFile))
+        footerMessage = "&copy; Re.Kast Limited"
+    }
 }

@@ -1,0 +1,10 @@
+{
+  "label": "Documentation",
+  "collapsible": false,
+  "collapsed": false,
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "This section provides guidance on how to update the documentation for using the library and maintaining code documentation."
+  }
+}

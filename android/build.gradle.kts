@@ -57,13 +57,22 @@ buildscript {
 }
 
 tasks.named<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaHtmlMultiModule") {
-    moduleName.set("MTN MOMO ANDROID SDK")
+    moduleName.set("| MTN MOMO ANDROID SDK")
     moduleVersion.set(project.version.toString())
     outputDirectory.set(layout.buildDirectory.dir("dokka"))
 
     pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
-        footerMessage = "(c) Re.Kast Limited"
+        customAssets = listOf(layout.projectDirectory.file("assets/logo-icon.svg").asFile)
+        customStyleSheets = listOf((layout.projectDirectory.file("assets/rekast.css").asFile))
+        footerMessage = "&copy; Re.Kast Limited"
+        separateInheritedMembers = false
     }
+
+    pluginsMapConfiguration.set(
+        mapOf(
+            "org.jetbrains.dokka.base.DokkaBase" to """{ "separateInheritedMembers": false }"""
+        )
+    )
 }
 
 tasks.register<Copy>("copyDocsToGhPages") {
