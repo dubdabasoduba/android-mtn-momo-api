@@ -3,6 +3,10 @@ sidebar_position: 1
 sidebar_label: Overview
 ---
 
+<head>
+  <meta name="algolia-site-verification"  content="B7251C3239FB8992" />
+</head>
+
 # MTN MOMO API SDK for Android
 ---
 
