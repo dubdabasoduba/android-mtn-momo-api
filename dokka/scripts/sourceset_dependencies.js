@@ -1,0 +1,1 @@
+sourceset_dependencies = '{":momo-api-sdk:dokkaHtmlPartial/debug":[],":momo-api-sdk:dokkaHtmlPartial/main":[],":momo-api-sdk:dokkaHtmlPartial/release":[],":sample:dokkaHtmlPartial/debug":[],":sample:dokkaHtmlPartial/main":[],":sample:dokkaHtmlPartial/release":[]}'
