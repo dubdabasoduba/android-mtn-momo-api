@@ -7,6 +7,8 @@ sidebar_label: Code Contributions
 
 Contributions to the MTM Momo Android SDK are not only welcome but encouraged! We believe that collaboration is key to improving our project and making it more robust. If you have ideas, improvements, or bug fixes, please feel free to submit a Pull Request (PR). However, for significant changes, we recommend opening an issue first to discuss your proposed modifications. This helps ensure that your contributions align with the project's goals and standards.
 
+---
+
 ## Steps to Contribute
 
 To contribute to the project, please follow these steps:

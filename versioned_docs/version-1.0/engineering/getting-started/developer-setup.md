@@ -4,6 +4,7 @@ sidebar_label: Developer Setup
 ---
 
 # Getting Started 
+---
 
 ## Prerequisites
 
