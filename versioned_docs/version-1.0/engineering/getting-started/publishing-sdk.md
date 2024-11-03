@@ -43,6 +43,10 @@ When publishing to remote repositories, remember to follow these steps:
    #SONATYPE_HOST=CENTRAL_PORTAL
    ```
    :::
+3. Update your global `gradle.properties` found on `~/.gradle/gradle.properties` with the correct authentication credentials.
+    :::warning
+    **Important Reminder**: Both Sonatype OSS and Maven Central require tokens for authentication, so log in to the portals and generate the necessary tokens. 
+    :::
 
 ### Publishing Command
 
@@ -83,5 +87,6 @@ This command will place the published artifact in your local Maven repository, t
 - [Semantic Versioning](https://semver.org/)
 - [Dokka Documentation](https://kotlinlang.org/docs/dokka/overview.html)
 - [Creating a Changelog](https://keepachangelog.com/en/1.0.0/)
+- [Best Practices for Publishing Java Libraries](https://www.baeldung.com/publishing-java-libraries)
 
 By following these guidelines, you can effectively publish the MTN MOMO API SDK, ensuring that it is accessible and usable for developers looking to integrate mobile money services into their applications.
