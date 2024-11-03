@@ -99,11 +99,6 @@ dependencies {
     testImplementation(libs.mockk)
 }
 
-mavenPublishing {
-    publishToMavenCentral(SonatypeHost.S01, true)
-    signAllPublications()
-}
-
 tasks.named<org.jetbrains.dokka.gradle.DokkaTaskPartial>("dokkaHtmlPartial") {
     dependsOn("kaptDebugKotlin", "kaptReleaseKotlin")
     pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
