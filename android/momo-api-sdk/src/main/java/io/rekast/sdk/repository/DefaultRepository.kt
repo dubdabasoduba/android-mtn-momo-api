@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 - 2024, Benjamin Mwalimu
+ * Copyright 2023-2024, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,18 +21,24 @@ import io.rekast.sdk.model.AccountHolder
 import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.model.MomoNotification
 import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.ProviderCallBackHost
 import io.rekast.sdk.model.UserInfoWithConsent
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.ApiKey
 import io.rekast.sdk.model.authentication.ApiUser
 import io.rekast.sdk.model.authentication.credentials.AccessTokenCredentials
 import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
-import io.rekast.sdk.network.service.AuthenticationService
 import io.rekast.sdk.network.service.products.CollectionService
 import io.rekast.sdk.network.service.products.CommonService
 import io.rekast.sdk.network.service.products.DisbursementsService
+import io.rekast.sdk.repository.data.DataResponse
+import io.rekast.sdk.repository.data.NetworkResult
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import okhttp3.ResponseBody
 import org.apache.commons.lang3.StringUtils
 import retrofit2.Response
@@ -52,13 +58,13 @@ import retrofit2.Response
  */
 @Singleton
 class DefaultRepository @Inject constructor(
-    private val authenticationService: AuthenticationService,
+    private val defaultSource: DefaultSource,
     private val commonService: CommonService,
     private val disbursementsService: DisbursementsService,
     private val collection: CollectionService,
     private val basicAuthCredentialsT: BasicAuthCredentials,
     private val accessTokenCredentialsT: AccessTokenCredentials
-) {
+) : DataResponse() {
 
     /**
      * Sets up basic authentication credentials.
@@ -85,14 +91,17 @@ class DefaultRepository @Inject constructor(
      * @param apiVersion The version of the API to use.
      * @param uuid A unique identifier for the request.
      * @param productSubscriptionKey The subscription key for the product.
-     * @return A [Response] containing the created [ApiUser].
+     * @return A [Response] containing the created [Unit].
      */
-    suspend fun createApiUser(
+    fun createApiUser(
+        providerCallBackHost: ProviderCallBackHost,
         apiVersion: String,
         uuid: String,
         productSubscriptionKey: String
-    ): Response<ApiUser> {
-        return authenticationService.createApiUser(apiVersion, uuid, productSubscriptionKey)
+    ): Flow<NetworkResult<ApiUser>> {
+        return flow<NetworkResult<ApiUser>> {
+            emit(safeApiCall { defaultSource.createApiUser(providerCallBackHost = providerCallBackHost, apiVersion = apiVersion, uuid = uuid, productSubscriptionKey = productSubscriptionKey) })
+        }.flowOn(Dispatchers.IO)
     }
 
     /**
@@ -102,12 +111,13 @@ class DefaultRepository @Inject constructor(
      * @param productSubscriptionKey The subscription key for the product.
      * @return A [Response] containing the [ApiUser] if found.
      */
-    suspend fun checkApiUser(
+    fun checkApiUser(
         apiVersion: String,
         productSubscriptionKey: String
-    ): Response<ApiUser> {
-        return authenticationService
-            .getApiUser(apiVersion, BuildConfig.MOMO_API_USER_ID, productSubscriptionKey)
+    ): Flow<NetworkResult<ApiUser>> {
+        return flow<NetworkResult<ApiUser>> {
+            emit(safeApiCall { defaultSource.getApiUser(apiVersion, userId = BuildConfig.MOMO_API_USER_ID, productSubscriptionKey = productSubscriptionKey) })
+        }.flowOn(Dispatchers.IO)
     }
 
     /**
@@ -117,12 +127,13 @@ class DefaultRepository @Inject constructor(
      * @param productSubscriptionKey The subscription key for the product.
      * @return A [Response] containing the created [ApiKey].
      */
-    suspend fun createApiKey(
+    fun createApiKey(
         apiVersion: String,
         productSubscriptionKey: String
-    ): Response<ApiKey> {
-        return authenticationService
-            .createApiKey(apiVersion, BuildConfig.MOMO_API_USER_ID, productSubscriptionKey)
+    ): Flow<NetworkResult<ApiKey>> {
+        return flow<NetworkResult<ApiKey>> {
+            emit(safeApiCall { defaultSource.createApiKey(apiVersion = apiVersion, userId = BuildConfig.MOMO_API_USER_ID, productSubscriptionKey = productSubscriptionKey) })
+        }.flowOn(Dispatchers.IO)
     }
 
     /**
@@ -132,11 +143,13 @@ class DefaultRepository @Inject constructor(
      * @param productType The type of product for which to obtain the access token.
      * @return A [Response] containing the obtained [AccessToken].
      */
-    suspend fun getAccessToken(
+    fun getAccessToken(
         productSubscriptionKey: String,
         productType: String
-    ): Response<AccessToken> {
-        return authenticationService.getAccessToken(productType, productSubscriptionKey)
+    ): Flow<NetworkResult<AccessToken>> {
+        return flow<NetworkResult<AccessToken>> {
+            emit(safeApiCall { defaultSource.getAccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey) })
+        }.flowOn(Dispatchers.IO)
     }
 
     /**

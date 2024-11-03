@@ -13,26 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.rekast.sdk.utils
+package io.rekast.sdk.model
+
+import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
 /**
- * Enum class representing the different types of account holders in the MTN MOMO system.
+ * Represents the callback host for the MTN MOMO API.
  *
- * @property accountHolderType The string representation of the account holder type.
+ * This class is used to define the provider's callback host URL,
+ * which is necessary for handling responses from the MTN MOMO API.
+ *
+ * @property providerCallbackHost The callback host for the provider, represented as a nullable String.
  */
-enum class AccountHolderType(val accountHolderType: String) {
-    /**
-     * Represents a mobile number as the account holder type.
-     */
-    MSISDN("msisdn"),
-
-    /**
-     * Represents an email address as the account holder type.
-     */
-    EMAIL("email"),
-
-    /**
-     * Represents a party code as the account holder type.
-     */
-    PARTY_CODE("party_code")
-}
+@Serializable
+data class ProviderCallBackHost(
+    @SerializedName("providerCallbackHost") val providerCallbackHost: String? = null
+)

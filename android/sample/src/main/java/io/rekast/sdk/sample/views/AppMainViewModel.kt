@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 - 2024, Benjamin Mwalimu
+ * Copyright 2023-2024, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,16 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.rekast.sdk.BuildConfig
-import io.rekast.sdk.model.MomoTransaction
+import io.rekast.sdk.model.ProviderCallBackHost
 import io.rekast.sdk.model.authentication.credentials.AccessTokenCredentials
 import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
 import io.rekast.sdk.repository.DefaultRepository
+import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
 import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.utils.ProductType
 import io.rekast.sdk.utils.Settings
 import javax.inject.Inject
-import kotlin.toString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -43,11 +43,16 @@ import timber.log.Timber
  * ViewModel for managing authentication and API interactions.
  *
  * This ViewModel handles setting authentication credentials and making API calls.
+ *
+ * @property defaultRepository The repository for handling API calls related to MTN MOMO.
+ * @property context The application context for accessing resources and utilities.
+ * @property settings The settings utility for managing application settings.
  */
 @HiltViewModel
 open class AppMainViewModel @Inject constructor(
     private val defaultRepository: DefaultRepository,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val settings: Settings
 ) : ViewModel() {
 
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
@@ -80,27 +85,27 @@ open class AppMainViewModel @Inject constructor(
 
     /**
      * Checks the user status and creates an API user if necessary.
+     *
+     * This method checks if the API user exists and creates a new one if it does not.
      */
     fun checkUser() {
-        viewModelScope.launch {
-            val validUser = defaultRepository.checkApiUser(
-                BuildConfig.MOMO_API_VERSION_V1,
-                Settings().getProductSubscriptionKeys(ProductType.COLLECTION)
-            )
-
-            if (validUser.isSuccessful == true) {
-                createApiKey()
-            } else {
-                Timber.e(validUser.errorBody()?.string())
-                val createdUser = defaultRepository.createApiUser(
-                    BuildConfig.MOMO_API_VERSION_V1,
-                    BuildConfig.MOMO_API_USER_ID,
-                    Settings().getProductSubscriptionKeys(ProductType.COLLECTION)
-                )
-                if (createdUser.isSuccessful == true) {
-                    checkUser()
-                } else {
-                    Timber.e("ApiUser was not created")
+        val productType = settings.getProductSubscriptionKeys(ProductType.COLLECTION)
+        viewModelScope.launch(Dispatchers.IO) {
+            defaultRepository.checkApiUser(BuildConfig.MOMO_API_VERSION_V1, productType).collect { apiUser ->
+                when (apiUser) {
+                    is NetworkResult.Success -> { createApiKey() }
+                    is NetworkResult.Error -> {
+                        Timber.e(apiUser.message)
+                        val providerCallBackHost = ProviderCallBackHost(providerCallbackHost = BuildConfig.MOMO_PROVIDER_CALBACK_HOST)
+                        defaultRepository.createApiUser(providerCallBackHost, BuildConfig.MOMO_API_VERSION_V1, BuildConfig.MOMO_API_USER_ID, productType).collect { newApiUser ->
+                            when (newApiUser) {
+                                is NetworkResult.Success -> { checkUser() }
+                                is NetworkResult.Error -> { Timber.e("New Api user was not created %s", newApiUser.message) }
+                                else -> { Timber.e("An error occurred") }
+                            }
+                        }
+                    }
+                    else -> { Timber.e("An error occurred") }
                 }
             }
         }
@@ -108,28 +113,31 @@ open class AppMainViewModel @Inject constructor(
 
     /**
      * Creates an API key for the user.
+     *
+     * This method retrieves the API key for the user and sets up basic authentication.
      */
     private fun createApiKey() {
+        val productType = settings.getProductSubscriptionKeys(ProductType.REMITTANCE)
         viewModelScope.launch(Dispatchers.IO) {
             val apiUserKey = this@AppMainViewModel.context.let { Utils.getApiKey(it) }
             if (StringUtils.isNotBlank(apiUserKey)) {
                 this@AppMainViewModel.setBasicAuth(BuildConfig.MOMO_API_USER_ID, apiUserKey.toString())
                 getAccessToken()
             } else {
-                val userApiKey = defaultRepository.createApiKey(
-                    BuildConfig.MOMO_API_VERSION_V1,
-                    Settings().getProductSubscriptionKeys(ProductType.REMITTANCE)
-                )
-                try {
-                    if (userApiKey.isSuccessful == true) {
-                        context?.let { Utils.saveApiKey(it, userApiKey.body()?.apiKey.toString()) }
-                        this@AppMainViewModel.setBasicAuth(BuildConfig.MOMO_API_USER_ID, apiUserKey.toString())
-                        Timber.d("Api Key fetched and saved successfully")
-                        getAccessToken()
-                    } else {
-                        Timber.e("Api Key creation failed %s", userApiKey?.errorBody()?.string())
+                defaultRepository.createApiKey(BuildConfig.MOMO_API_VERSION_V1, productType).collect { apiKey ->
+                    when (apiKey) {
+                        is NetworkResult.Success -> {
+                            try {
+                                context.let { Utils.saveApiKey(it, apiKey.response?.apiKey.toString()) }
+                                this@AppMainViewModel.setBasicAuth(BuildConfig.MOMO_API_USER_ID, apiUserKey.toString())
+                                Timber.d("Api Key fetched and saved successfully")
+                                getAccessToken()
+                            } catch (exception: Exception) {
+                                Timber.d("An Error occurred %s", exception.message)
+                            }
+                        }
+                        else -> { Timber.e("Api Key creation failed %s", apiKey.message) }
                     }
-                } catch (exception: Exception) {
                 }
             }
         }
@@ -137,32 +145,37 @@ open class AppMainViewModel @Inject constructor(
 
     /**
      * Retrieves the access token for the user.
+     *
+     * This method checks if the access token is available and retrieves it if not.
      */
     private fun getAccessToken() {
+        val productType = settings.getProductSubscriptionKeys(ProductType.REMITTANCE)
         viewModelScope.launch(Dispatchers.IO) {
-            val apiUserKey = context?.let { Utils.getApiKey(it) }
-            val accessToken = context?.let { Utils.getAccessToken(it) }
+            val apiUserKey = context.let { Utils.getApiKey(it) }
+            val accessToken = context.let { Utils.getAccessToken(it) }
 
             if (StringUtils.isNotBlank(apiUserKey) && StringUtils.isBlank(accessToken)) {
-                apiUserKey?.let { apiKey ->
-                    val accessToken = defaultRepository.getAccessToken(
-                        Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
-                        ProductType.REMITTANCE.productType
-                    )
-                    try {
-                        if (accessToken?.isSuccessful == true) {
-                            context?.let { activityContext ->
-                                Utils.saveAccessToken(
-                                    activityContext,
-                                    accessToken.body()
-                                )
+                apiUserKey.let { apiKey ->
+                    defaultRepository.getAccessToken(productType, ProductType.REMITTANCE.productType).collect { accessToken ->
+                        when (accessToken) {
+                            is NetworkResult.Success -> {
+                                try {
+                                    context.let { activityContext ->
+                                        Utils.saveAccessToken(activityContext, accessToken.response)
+                                    }
+                                    this@AppMainViewModel.setAccessToken(Utils.getAccessToken(context))
+                                    Timber.d("Access token created and saved successfully")
+                                } catch (exception: Exception) {
+                                    Timber.d("An Error occurred %s", exception.message)
+                                }
                             }
-                            this@AppMainViewModel.setAccessToken(Utils.getAccessToken(context))
-                            Timber.d("Access token created and saved successfully")
-                        } else {
-                            Timber.e("Access token creation failed %s", accessToken?.errorBody()?.string())
+                            is NetworkResult.Error -> {
+                                Timber.e("Access token creation failed %s", accessToken.message)
+                            }
+                            else -> {
+                                Timber.e("Access token creation failed")
+                            }
                         }
-                    } catch (exception: Exception) {
                     }
                 }
             } else {
@@ -217,115 +230,70 @@ open class AppMainViewModel @Inject constructor(
                 }
             }
         }
-    }*/
+    }
 
-    /*    private fun getApiKey() {
-            viewModelScope.launch {
-                val apiUserKey = context?.let { Utils.getApiKey(it) }
-                if (StringUtils.isNotBlank(apiUserKey)) {
-                    getAccessToken()
-                } else {
-                    defaultRepository.getUserApiKey(
-                        Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
-                        BuildConfig.MOMO_API_VERSION_V1
-                    ) { momoAPIResult ->
-                        when (momoAPIResult) {
-                            is MomoResponse.Success -> {
-                                val generatedApiUserKey = momoAPIResult.value
-                                context?.let { Utils.saveApiKey(it, generatedApiUserKey.apiKey) }
-                                getAccessToken()
-                            }
-                            is MomoResponse.Failure -> {
-                                val momoAPIException = momoAPIResult.momoException!!
-                            }
+
+
+    /**
+     * Requests a refund for a transaction.
+     *
+     * @param requestToPayUuid The UUID of the request to pay.
+     */
+    fun refund(requestToPayUuid: String) {
+        val accessToken = context?.let { Utils.getAccessToken(it) }
+        val transactionUuid = Settings().generateUUID()
+        if (StringUtils.isNotBlank(accessToken) && StringUtils.isNotBlank(requestToPayUuid)) {
+            val creditTransaction = createRefundTransaction(requestToPayUuid)
+            accessToken?.let {
+                defaultRepository.refund(
+                    it,
+                    creditTransaction,
+                    BuildConfig.MOMO_API_VERSION_V2,
+                    Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
+                    transactionUuid
+                ) { momoAPIResult ->
+                    when (momoAPIResult) {
+                        is MomoResponse.Success -> {
+                            getRefundStatus(transactionUuid)
+                        }
+                        is MomoResponse.Failure -> {
+                            val momoAPIException = momoAPIResult.momoException
                         }
                     }
                 }
             }
         }
+    }
 
-        private fun getAccessToken() {
-            viewModelScope.launch {
-                val apiUserKey = context?.let { Utils.getApiKey(it) }
-                val accessToken = context?.let { Utils.getAccessToken(it) }
-                if (StringUtils.isNotBlank(apiUserKey) && StringUtils.isBlank(accessToken)) {
-                    apiUserKey?.let { apiKey ->
-                        defaultRepository.getAccessToken(
-                            Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
-                            apiKey,
-                            ProductType.REMITTANCE.productType
-                        ) { momoAPIResult ->
-                            when (momoAPIResult) {
-                                is MomoResponse.Success -> {
-                                    val generatedAccessToken = momoAPIResult.value
-                                    context?.let { activityContext ->
-                                        Utils.saveAccessToken(
-                                            activityContext,
-                                            generatedAccessToken
-                                        )
-                                    }
-                                }
-                                is MomoResponse.Failure -> {
-                                    val momoAPIException = momoAPIResult.momoException!!
-                                }
-                            }
+    /**
+     * Retrieves the status of a refund transaction.
+     *
+     * @param referenceId The reference ID of the transaction.
+     */
+    private fun getRefundStatus(referenceId: String) {
+        val accessToken = context?.let { Utils.getAccessToken(it) }
+        if (StringUtils.isNotBlank(accessToken)) {
+            accessToken?.let {
+                defaultRepository.getRefundStatus(
+                    referenceId,
+                    BuildConfig.MOMO_API_VERSION_V1,
+                    Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
+                    it
+                ) { momoAPIResult ->
+                    when (momoAPIResult) {
+                        is MomoResponse.Success -> {
+                            val completeTransfer =
+                                Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), MomoTransaction::class.java)
+                            Timber.d(completeTransfer.toString())
                         }
-                    }
-                } else {
-                }
-            }
-        }
-
-        fun refund(requestToPayUuid: String) {
-            val accessToken = context?.let { Utils.getAccessToken(it) }
-            val transactionUuid = Settings().generateUUID()
-            if (StringUtils.isNotBlank(accessToken) && StringUtils.isNotBlank(requestToPayUuid)) {
-                val creditTransaction = createRefundTransaction(requestToPayUuid)
-                accessToken?.let {
-                    defaultRepository.refund(
-                        it,
-                        creditTransaction,
-                        BuildConfig.MOMO_API_VERSION_V2,
-                        Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
-                        transactionUuid
-                    ) { momoAPIResult ->
-                        when (momoAPIResult) {
-                            is MomoResponse.Success -> {
-                                getRefundStatus(transactionUuid)
-                            }
-                            is MomoResponse.Failure -> {
-                                val momoAPIException = momoAPIResult.momoException
-                            }
+                        is MomoResponse.Failure -> {
+                            val momoAPIException = momoAPIResult.momoException
                         }
                     }
                 }
             }
         }
-
-        private fun getRefundStatus(referenceId: String) {
-            val accessToken = context?.let { Utils.getAccessToken(it) }
-            if (StringUtils.isNotBlank(accessToken)) {
-                accessToken?.let {
-                    defaultRepository.getRefundStatus(
-                        referenceId,
-                        BuildConfig.MOMO_API_VERSION_V1,
-                        Settings().getProductSubscriptionKeys(ProductType.DISBURSEMENTS),
-                        it
-                    ) { momoAPIResult ->
-                        when (momoAPIResult) {
-                            is MomoResponse.Success -> {
-                                val completeTransfer =
-                                    Gson().fromJson(momoAPIResult.value!!.source().readUtf8(), MomoTransaction::class.java)
-                                Timber.d(completeTransfer.toString())
-                            }
-                            is MomoResponse.Failure -> {
-                                val momoAPIException = momoAPIResult.momoException
-                            }
-                        }
-                    }
-                }
-            }
-        }*/
+    }
 
     /**
      * Creates a refund transaction.
@@ -335,19 +303,19 @@ open class AppMainViewModel @Inject constructor(
      */
     private fun createRefundTransaction(requestToPayUuid: String): MomoTransaction {
         return MomoTransaction(
-            "30",
-            "EUR",
-            null,
-            Settings().generateUUID(),
-            null,
-            null,
-            "Testing",
-            "The Good Company",
-            null,
-            null,
-            requestToPayUuid
+            amount = "30",
+            currency = "EUR",
+            financialTransactionId = null,
+            externalId = Settings().generateUUID(),
+            payee = null,
+            payer = null,
+            payerMessage = "Testing",
+            payeeNote = "The Good Company",
+            status = null,
+            reason = null,
+            referenceIdToRefund = requestToPayUuid
         )
-    }
+    }*/
 
     /**
      * Emits the state of the SnackBar component.
