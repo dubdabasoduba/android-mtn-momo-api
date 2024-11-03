@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 - 2024, Benjamin Mwalimu
+ * Copyright 2023-2024, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,13 @@
  */
 package io.rekast.sdk.network.service
 
+import io.rekast.sdk.model.ProviderCallBackHost
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.ApiKey
 import io.rekast.sdk.model.authentication.ApiUser
 import io.rekast.sdk.utils.MomoConstants
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -33,8 +35,18 @@ import retrofit2.http.Path
  */
 sealed interface AuthenticationService {
 
+    /**
+     * Creates a new API user.
+     *
+     * @param providerCallBackHost The callback host for the provider.
+     * @param apiVersion The version of the API (e.g., v1_0 or v2_0).
+     * @param uuid A unique identifier for the request.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @return A [Response] containing the created [ApiUser].
+     */
     @POST(MomoConstants.EndPoints.CREATE_API_USER)
     suspend fun createApiUser(
+        @Body providerCallBackHost: ProviderCallBackHost,
         @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
         @Header(MomoConstants.Headers.X_REFERENCE_ID) uuid: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String

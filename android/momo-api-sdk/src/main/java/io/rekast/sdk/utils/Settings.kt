@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 - 2024, Benjamin Mwalimu
+ * Copyright 2023-2024, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,6 +88,7 @@ class Settings @Inject constructor() {
                     BuildConfig.MOMO_COLLECTION_SECONDARY_KEY
                 }
             }
+
             ProductType.REMITTANCE -> {
                 if (StringUtils.isNotBlank(BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY)) {
                     BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY
@@ -95,6 +96,7 @@ class Settings @Inject constructor() {
                     BuildConfig.MOMO_REMITTANCE_SECONDARY_KEY
                 }
             }
+
             ProductType.DISBURSEMENTS -> {
                 if (StringUtils.isNotBlank(BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY)) {
                     BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY
