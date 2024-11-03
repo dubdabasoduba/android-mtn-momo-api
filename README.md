@@ -78,10 +78,6 @@ MOMO_API_VERSION_V1="" ## The API version for v1 endpoints, use 'v1_0' for sandb
 MOMO_API_VERSION_V2="" ## The API version for v2 endpoints, use 'v2_0' for sandbox and 'v2' for production
 ```
 
-:::tip
-**Important Note**: Ensure that all entries in the `local.properties` file are filled out correctly. The application will fail to compile if any required entries are missing. Double-check your configuration to avoid compilation errors. Read more about how to find the diffrent keys [here](./engineering/getting-started/developer-setup)
-:::
-
 ## License
 
 This project is licensed under the Apache License, Version 2.0. For more details, please refer to the [LICENSE](LICENSE) file.
@@ -91,7 +87,6 @@ This project is licensed under the Apache License, Version 2.0. For more details
 For inquiries or support, please reach out to:
 
 **Benjamin Mwalimu** [GitHub Profile](https://github.com/dubdabasoduba)
-Project Repository: [https://github.com/re-kast/android-mtn-momo-api-sdk](https://github.com/re-kast/android-mtn-momo-api-sdk)
 
 ## Acknowledgments
 

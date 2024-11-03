@@ -97,6 +97,7 @@ This project is licensed under the Apache License, Version 2.0. For more details
 For inquiries or support, please reach out to:
 
 **Benjamin Mwalimu** [GitHub Profile](https://github.com/dubdabasoduba)
+
 Project Repository: [https://github.com/re-kast/android-mtn-momo-api-sdk](https://github.com/re-kast/android-mtn-momo-api-sdk)
 
 ## Acknowledgments
