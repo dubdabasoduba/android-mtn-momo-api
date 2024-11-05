@@ -15,8 +15,12 @@
  */
 package io.rekast.sdk.repository
 
+import io.rekast.sdk.model.AccountHolder
+import io.rekast.sdk.model.MomoNotification
+import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.model.ProviderCallBackHost
 import io.rekast.sdk.network.service.AuthenticationService
+import io.rekast.sdk.network.service.products.CommonService
 import javax.inject.Inject
 
 /**
@@ -28,8 +32,12 @@ import javax.inject.Inject
  * and obtain access tokens.
  *
  * @property authenticationService The service for handling authentication-related API calls.
+ * @property commonService The service for handling common API calls.
  */
-class DefaultSource @Inject constructor(private val authenticationService: AuthenticationService) {
+class DefaultSource @Inject constructor(
+    private val authenticationService: AuthenticationService,
+    private val commonService: CommonService
+) {
 
     /**
      * Creates a new API user.
@@ -45,7 +53,12 @@ class DefaultSource @Inject constructor(private val authenticationService: Authe
         apiVersion: String,
         uuid: String,
         productSubscriptionKey: String
-    ) = authenticationService.createApiUser(providerCallBackHost = providerCallBackHost, apiVersion = apiVersion, uuid = uuid, productSubscriptionKey = productSubscriptionKey)
+    ) = authenticationService.createApiUser(
+        providerCallBackHost = providerCallBackHost,
+        apiVersion = apiVersion,
+        uuid = uuid,
+        productSubscriptionKey = productSubscriptionKey
+    )
 
     /**
      * Retrieves the details of an existing API user.
@@ -55,7 +68,15 @@ class DefaultSource @Inject constructor(private val authenticationService: Authe
      * @param productSubscriptionKey The subscription key for the product.
      * @return A [Response] containing the requested [ApiUser].
      */
-    suspend fun getApiUser(apiVersion: String, userId: String, productSubscriptionKey: String) = authenticationService.getApiUser(apiVersion = apiVersion, apiUser = userId, productSubscriptionKey = productSubscriptionKey)
+    suspend fun getApiUser(
+        apiVersion: String,
+        userId: String,
+        productSubscriptionKey: String
+    ) = authenticationService.getApiUser(
+        apiVersion = apiVersion,
+        apiUser = userId,
+        productSubscriptionKey = productSubscriptionKey
+    )
 
     /**
      * Creates a new API key for the specified API user.
@@ -65,7 +86,15 @@ class DefaultSource @Inject constructor(private val authenticationService: Authe
      * @param productSubscriptionKey The subscription key for the product.
      * @return A [Response] containing the generated [ApiKey].
      */
-    suspend fun createApiKey(apiVersion: String, userId: String, productSubscriptionKey: String) = authenticationService.createApiKey(apiVersion = apiVersion, apiUser = userId, productSubscriptionKey = productSubscriptionKey)
+    suspend fun createApiKey(
+        apiVersion: String,
+        userId: String,
+        productSubscriptionKey: String
+    ) = authenticationService.createApiKey(
+        apiVersion = apiVersion,
+        apiUser = userId,
+        productSubscriptionKey = productSubscriptionKey
+    )
 
     /**
      * Obtains an access token for the specified product type.
@@ -74,5 +103,205 @@ class DefaultSource @Inject constructor(private val authenticationService: Authe
      * @param productSubscriptionKey The subscription key for the product.
      * @return A [Response] containing the obtained [AccessToken].
      */
-    suspend fun getAccessToken(productType: String, productSubscriptionKey: String) = authenticationService.getAccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey)
+    suspend fun getAccessToken(
+        productType: String,
+        productSubscriptionKey: String
+    ) = authenticationService.getAccessToken(
+        productType = productType,
+        productSubscriptionKey = productSubscriptionKey
+    )
+
+    /**
+     * Retrieves the account balance for a specified product type.
+     *
+     * @param productType The type of product for which to retrieve the account balance.
+     * @param apiVersion The version of the API to use.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The API environment (e.g., production, sandbox).
+     * @return A [Response] containing the [AccountBalance].
+     */
+    suspend fun getAccountBalance(
+        productType: String,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        environment: String
+    ) = commonService.getAccountBalance(
+        productType = productType,
+        apiVersion = apiVersion,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
+     * Retrieves the account balance in a specific currency.
+     *
+     * @param productType The type of product for which to retrieve the account balance.
+     * @param apiVersion The version of the API to use.
+     * @param currency The currency for which to retrieve the account balance.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The API environment (e.g., production, sandbox).
+     * @return A [Response] containing the [AccountBalance].
+     */
+    suspend fun getAccountBalanceInSpecificCurrency(
+        productType: String,
+        apiVersion: String,
+        currency: String,
+        productSubscriptionKey: String,
+        environment: String
+    ) = commonService.getAccountBalanceInSpecificCurrency(
+        productType = productType,
+        apiVersion = apiVersion,
+        currency = currency,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
+     * Retrieves the basic user information for a specified MTN MOMO user.
+     *
+     * @param productType The type of product for which to retrieve the user information.
+     * @param apiVersion The version of the API to use.
+     * @param accountHolder The identifier for the account holder.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The API environment (e.g., production, sandbox).
+     * @return A [Response] containing the [BasicUserInfo] of the specified user.
+     */
+    suspend fun getBasicUserInfo(
+        productType: String,
+        apiVersion: String,
+        accountHolder: String,
+        productSubscriptionKey: String,
+        environment: String
+    ) = commonService.getBasicUserInfo(
+        productType = productType,
+        apiVersion = apiVersion,
+        accountHolder = accountHolder,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
+     * Retrieves user information with consent for a specified product type.
+     *
+     * @param productType The type of product for which to retrieve the user information.
+     * @param apiVersion The version of the API to use.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The API environment (e.g., production, sandbox).
+     * @return A [Response] containing the user information with consent.
+     */
+    suspend fun getUserInfoWithConsent(
+        productType: String,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        environment: String
+    ) = commonService.getUserInfoWithConsent(
+        productType = productType,
+        apiVersion = apiVersion,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
+     * Initiates a transfer for a specified product type.
+     *
+     * @param productType The type of product for which to initiate the transfer.
+     * @param apiVersion The version of the API to use.
+     * @param momoTransaction The transaction details.
+     * @param uuid A unique identifier for the request.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The API environment (e.g., production, sandbox).
+     * @return A [Response] indicating the result of the transfer.
+     */
+    suspend fun transfer(
+        productType: String,
+        apiVersion: String,
+        momoTransaction: MomoTransaction,
+        uuid: String,
+        productSubscriptionKey: String,
+        environment: String
+    ) = commonService.transfer(
+        productType = productType,
+        apiVersion = apiVersion,
+        momoTransaction = momoTransaction,
+        uuid = uuid,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
+     * Retrieves the status of a transfer for a specified product type.
+     *
+     * @param productType The type of product for which to retrieve the transfer status.
+     * @param apiVersion The version of the API to use.
+     * @param referenceId The reference ID of the transfer.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The API environment (e.g., production, sandbox).
+     * @return A [Response] containing the transfer status.
+     */
+    suspend fun getTransferStatus(
+        productType: String,
+        apiVersion: String,
+        referenceId: String,
+        productSubscriptionKey: String,
+        environment: String
+    ) = commonService.getTransferStatus(
+        productType = productType,
+        apiVersion = apiVersion,
+        referenceId = referenceId,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
+     * Sends a delivery notification for a request to pay.
+     *
+     * @param productType The type of product for which to send the notification.
+     * @param apiVersion The version of the API to use.
+     * @param referenceId The reference ID of the request to pay.
+     * @param momoNotification The notification details.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The API environment (e.g., production, sandbox).
+     * @return A [Response] indicating the result of the notification request.
+     */
+    suspend fun requestToPayDeliveryNotification(
+        productType: String,
+        apiVersion: String,
+        referenceId: String,
+        momoNotification: MomoNotification,
+        productSubscriptionKey: String,
+        environment: String
+    ) = commonService.requestToPayDeliveryNotification(
+        productType = productType,
+        apiVersion = apiVersion,
+        referenceId = referenceId,
+        momoNotification = momoNotification,
+        notificationMessage = momoNotification.notificationMessage,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
+     * Validates the status of an account holder.
+     *
+     * @param productType The type of product for which to validate the account holder.
+     * @param apiVersion The version of the API to use.
+     * @param accountHolder The account holder details.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The API environment (e.g., production, sandbox).
+     * @return A [Response] indicating the result of the account holder status validation.
+     */
+    suspend fun validateAccountHolderStatus(
+        productType: String,
+        apiVersion: String,
+        accountHolder: AccountHolder,
+        productSubscriptionKey: String,
+        environment: String
+    ) = commonService.validateAccountHolderStatus(
+        productType = productType,
+        apiVersion = apiVersion,
+        accountHolderId = accountHolder.partyId,
+        accountHolderType = accountHolder.partyIdType,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
 }

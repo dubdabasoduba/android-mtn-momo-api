@@ -41,7 +41,7 @@ const config: Config = {
             } satisfies Preset.Options,
         ],
     ],
-
+    themes: ['@docusaurus/theme-search-algolia'],
     themeConfig: {
         colorMode: {
             defaultMode: 'dark',

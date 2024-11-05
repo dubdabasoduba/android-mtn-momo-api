@@ -49,7 +49,7 @@ class AccessTokenInterceptor @Inject constructor(
         val request = chain.request().newBuilder()
 
         if (accessToken.isNotEmpty()) {
-            Timber.tag("AccessTokenInterceptor").d("Access Token: $accessToken")
+            //Timber.d("Access Token: $accessToken")
             return chain.proceed(
                 request.addHeader(MomoConstants.Headers.AUTHORIZATION, "${MomoConstants.TokenTypes.BEARER} $accessToken")
                     .build()

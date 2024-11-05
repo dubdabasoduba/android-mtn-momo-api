@@ -21,25 +21,92 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.rekast.sdk.BuildConfig
 import io.rekast.sdk.model.AccountBalance
 import io.rekast.sdk.model.AccountHolderStatus
 import io.rekast.sdk.model.BasicUserInfo
+import io.rekast.sdk.model.authentication.credentials.AccessTokenCredentials
 import io.rekast.sdk.repository.DefaultRepository
+import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
+import io.rekast.sdk.utils.ProductType
+import io.rekast.sdk.utils.Settings
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import org.apache.commons.lang3.StringUtils
+import timber.log.Timber
 
 @HiltViewModel
-class HomeScreenViewModel @Inject constructor(private val defaultRepository: DefaultRepository, @ApplicationContext private val context: Context) : ViewModel() {
+class HomeScreenViewModel @Inject constructor(
+    private val defaultRepository: DefaultRepository,
+    @ApplicationContext private val context: Context,
+    private val settings: Settings
+) : ViewModel() {
     val showProgressBar = MutableLiveData(false)
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
     val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
     var basicUserInfo: MutableLiveData<BasicUserInfo?> = MutableLiveData(null)
     var accountHolderStatus: MutableLiveData<AccountHolderStatus?> = MutableLiveData(null)
     var accountBalance: MutableLiveData<AccountBalance?> = MutableLiveData(null)
+
+    /**
+     * Sets the Access Token credentials.
+     *
+     * @param accessToken The access token.
+     */
+    fun setAccessToken(accessToken: String) {
+        val accessTokenCredentials = AccessTokenCredentials(accessToken)
+        viewModelScope.launch {
+            defaultRepository.setUpAccessTokenAuth(accessTokenCredentials)
+        }
+    }
+
+    fun getBasicUserInfo() {
+        showProgressBar.postValue(true)
+        val productType = settings.getProductSubscriptionKeys(ProductType.REMITTANCE)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            if (StringUtils.isNotBlank(defaultRepository.getAccessTokenAuth().accessToken)) {
+                defaultRepository.getBasicUserInfo(
+                    productType = ProductType.REMITTANCE.productType,
+                    apiVersion = BuildConfig.MOMO_API_VERSION_V1,
+                    accountHolder = "99733123459",
+                    productSubscriptionKey = productType,
+                    environment = BuildConfig.MOMO_ENVIRONMENT
+                ).collect { basicUserInfo ->
+                    when (basicUserInfo) {
+                        is NetworkResult.Success -> {
+                            SnackBarComponentConfiguration(message = "Basic user info was fetched successfully")
+                            Timber.d("Basic user info was fetched successfully")
+                            showProgressBar.postValue(false)
+
+                            emitSnackBarState(
+                                SnackBarComponentConfiguration(message = "Basic user info was fetched successfully")
+                            )
+                        }
+
+                        is NetworkResult.Error -> {
+                            Timber.e("Basic user info was not fetched %s", basicUserInfo.message)
+                            showProgressBar.postValue(false)
+
+                            val message = basicUserInfo.message
+                            emitSnackBarState(
+                                SnackBarComponentConfiguration(message = "Basic user info was not fetched $message")
+                            )
+                        }
+
+                        else -> {
+                            Timber.e("An error occurred!!")
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 /*    fun getBasicUserInfo() {
         showProgressBar.postValue(true)

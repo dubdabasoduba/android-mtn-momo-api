@@ -65,6 +65,7 @@ vanniktechMavenPublish = "0.30.0"
 workRuntimeKtx = "2.10.0"
 coroutines = "1.9.0"
 retrofit-coroutines = "0.9.2"
+monitor = "1.7.2"
 
 [libraries]
 agoda-kakao = { group = "io.github.kakaocup", name = "kakao", version.ref = "kakao" }
@@ -150,6 +151,7 @@ squareup-retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-g
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
 kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name="kotlinx-coroutines-android", version.ref = "coroutines" }
 retrofit-coroutines = { group = "com.jakewharton.retrofit", name="retrofit2-kotlin-coroutines-adapter", version.ref = "retrofit-coroutines" }
+androidx-monitor = { group = "androidx.test", name = "monitor", version.ref = "monitor" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "application" }

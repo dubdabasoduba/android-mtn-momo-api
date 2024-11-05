@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 - 2024, Benjamin Mwalimu
+ * Copyright 2023-2024, Benjamin Mwalimu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.rekast.sdk.BuildConfig
-import io.rekast.sdk.model.MomoTransaction
 import io.rekast.sdk.model.ProviderCallBackHost
-import io.rekast.sdk.model.authentication.credentials.AccessTokenCredentials
 import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
@@ -57,7 +55,7 @@ open class AppMainViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _snackBarStateFlow = MutableSharedFlow<SnackBarComponentConfiguration>()
-    val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
+    open val snackBarStateFlow: SharedFlow<SnackBarComponentConfiguration> = _snackBarStateFlow.asSharedFlow()
 
     /**
      * Sets the Basic Authentication credentials.
@@ -69,18 +67,6 @@ open class AppMainViewModel @Inject constructor(
         val basicAuthCredentials = BasicAuthCredentials(apiUserId, apiKey)
         viewModelScope.launch {
             defaultRepository.setUpBasicAuth(basicAuthCredentials)
-        }
-    }
-
-    /**
-     * Sets the Access Token credentials.
-     *
-     * @param accessToken The access token.
-     */
-    fun setAccessToken(accessToken: String) {
-        val accessTokenCredentials = AccessTokenCredentials(accessToken)
-        viewModelScope.launch {
-            defaultRepository.setUpAccessTokenAuth(accessTokenCredentials)
         }
     }
 
@@ -122,19 +108,19 @@ open class AppMainViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val apiUserKey = this@AppMainViewModel.context.let { Utils.getApiKey(it) }
             if (StringUtils.isNotBlank(apiUserKey)) {
-                this@AppMainViewModel.setBasicAuth(BuildConfig.MOMO_API_USER_ID, apiUserKey.toString())
+                this@AppMainViewModel.setBasicAuth(apiUserId = BuildConfig.MOMO_API_USER_ID, apiKey = apiUserKey.toString())
                 getAccessToken()
             } else {
-                defaultRepository.createApiKey(BuildConfig.MOMO_API_VERSION_V1, productType).collect { apiKey ->
+                defaultRepository.createApiKey(apiVersion = BuildConfig.MOMO_API_VERSION_V1, productSubscriptionKey = productType).collect { apiKey ->
                     when (apiKey) {
                         is NetworkResult.Success -> {
                             try {
-                                context.let { Utils.saveApiKey(it, apiKey.response?.apiKey.toString()) }
-                                this@AppMainViewModel.setBasicAuth(BuildConfig.MOMO_API_USER_ID, apiUserKey.toString())
+                                context.let { Utils.saveApiKey(context = it, apiKey = apiKey.response?.apiKey.toString()) }
+                                this@AppMainViewModel.setBasicAuth(apiUserId = BuildConfig.MOMO_API_USER_ID, apiKey = apiUserKey.toString())
                                 Timber.d("Api Key fetched and saved successfully")
                                 getAccessToken()
                             } catch (exception: Exception) {
-                                Timber.d("An Error occurred %s", exception.message)
+                                Timber.e("An Error occurred %s", exception.message)
                             }
                         }
                         is NetworkResult.Error -> {
@@ -153,24 +139,24 @@ open class AppMainViewModel @Inject constructor(
      * This method checks if the access token is available and retrieves it if not.
      */
     private fun getAccessToken() {
-        val productType = settings.getProductSubscriptionKeys(ProductType.REMITTANCE)
+        val productType = settings.getProductSubscriptionKeys(productType = ProductType.REMITTANCE)
         viewModelScope.launch(Dispatchers.IO) {
             val apiUserKey = context.let { Utils.getApiKey(it) }
             val accessToken = context.let { Utils.getAccessToken(it) }
 
             if (StringUtils.isNotBlank(apiUserKey) && StringUtils.isBlank(accessToken)) {
                 apiUserKey.let { apiKey ->
-                    defaultRepository.getAccessToken(productType, ProductType.REMITTANCE.productType).collect { accessToken ->
+                    defaultRepository.getAccessToken(productSubscriptionKey = productType, productType = ProductType.REMITTANCE.productType).collect { accessToken ->
                         when (accessToken) {
                             is NetworkResult.Success -> {
                                 try {
                                     context.let { activityContext ->
                                         Utils.saveAccessToken(activityContext, accessToken.response)
                                     }
-                                    this@AppMainViewModel.setAccessToken(Utils.getAccessToken(context))
+                                    this@AppMainViewModel.setBasicAuth("", "")
                                     Timber.d("Access token created and saved successfully")
                                 } catch (exception: Exception) {
-                                    Timber.d("An Error occurred %s", exception.message)
+                                    Timber.e("An Error occurred %s", exception.message)
                                 }
                             }
                             is NetworkResult.Error -> {
@@ -183,36 +169,13 @@ open class AppMainViewModel @Inject constructor(
                     }
                 }
             } else {
-                this@AppMainViewModel.setAccessToken(Utils.getAccessToken(context))
-                Timber.d("A valid access token exists")
+                this@AppMainViewModel.setBasicAuth("", "")
+                Timber.d("A valid access tokem was found")
             }
         }
     }
 
-    /*    private fun getBasicUserInfo() {
-        val accessToken = Utils.getAccessToken(this)
-        if (StringUtils.isNotBlank(accessToken)) {
-            momoAPI.getBasicUserInfo(
-                "46733123459",
-                Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
-                accessToken,
-                BuildConfig.MOMO_API_VERSION_V1,
-                Constants.ProductTypes.REMITTANCE,
-            ) { momoAPIResult ->
-                when (momoAPIResult) {
-                    is MomoResponse.Success -> {
-                        val basicInfo = momoAPIResult.value
-                        Timber.d(basicInfo.toString())
-                    }
-                    is MomoResponse.Failure -> {
-                        val momoAPIException = momoAPIResult.APIException
-                        toast(momoAPIException?.message ?: "An error occurred!")
-                    }
-                }
-            }
-        }
-    }
-
+    /*
     private fun getUserInfoWithConsent() {
         val accessToken = Utils.getAccessToken(this)
         if (StringUtils.isNotBlank(accessToken)) {

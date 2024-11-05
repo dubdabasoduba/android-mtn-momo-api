@@ -88,6 +88,8 @@ dependencies {
 
     implementation(libs.google.dagger.hilt)
     implementation(libs.androidx.hilt.work)
+    androidTestImplementation(libs.androidx.monitor)
+    androidTestImplementation(libs.androidx.test.runner)
     kapt(libs.hilt.android.compiler)
 
     debugImplementation(libs.chuckerteam.chucker)

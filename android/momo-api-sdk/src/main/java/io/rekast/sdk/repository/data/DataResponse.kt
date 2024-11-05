@@ -60,5 +60,5 @@ abstract class DataResponse {
      * @return A [NetworkResult.Error] containing the error message.
      */
     private fun <T> error(errorMessage: String): NetworkResult<T> =
-        NetworkResult.Error("Api call fail $errorMessage")
+        NetworkResult.Error(" : $errorMessage")
 }

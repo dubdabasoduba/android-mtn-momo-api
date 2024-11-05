@@ -25,21 +25,30 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import io.rekast.sdk.model.authentication.credentials.AccessTokenCredentials
+import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.sample.ui.theme.AppTheme
+import io.rekast.sdk.sample.utils.DefaultDispatcherProvider
+import io.rekast.sdk.sample.utils.Utils
 import io.rekast.sdk.sample.views.AppMainActivity
-import io.rekast.sdk.sample.views.AppMainViewModel
+import javax.inject.Inject
 import kotlin.getValue
+import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
 @AndroidEntryPoint
 class HomeScreenFragment : Fragment() {
+    @Inject
+    lateinit var dispatcherProvider: DefaultDispatcherProvider
+
+    @Inject
+    lateinit var defaultRepository: DefaultRepository
     private lateinit var activity: AppMainActivity
     private val homeScreenViewModel by viewModels<HomeScreenViewModel>()
-    private val appMainViewModel by activityViewModels<AppMainViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,5 +76,21 @@ class HomeScreenFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         activity = requireActivity() as AppMainActivity
+
+        val accessToken = Utils.getAccessToken(activity.applicationContext)
+        setAccessToken(accessToken)
+        homeScreenViewModel.viewModelScope.launch(dispatcherProvider.io()) { homeScreenViewModel.getBasicUserInfo() }
+    }
+
+    /**
+     * Sets the Access Token credentials.
+     *
+     * @param accessToken The access token.
+     */
+    fun setAccessToken(accessToken: String) {
+        val accessTokenCredentials = AccessTokenCredentials(accessToken)
+        homeScreenViewModel.viewModelScope.launch {
+            defaultRepository.setUpAccessTokenAuth(accessTokenCredentials)
+        }
     }
 }
