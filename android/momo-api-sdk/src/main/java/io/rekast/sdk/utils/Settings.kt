@@ -73,40 +73,6 @@ class Settings @Inject constructor() {
         }
     }
 
-    /**
-     * Retrieves the product subscription keys based on the specified product
-     *
-     * @param productType The MTN MOMO API product type.
-     * @return The corresponding product key as a String.
-     */
-    fun getProductSubscriptionKeys(productType: ProductType): String {
-        val productKey: String = when (productType) {
-            ProductType.COLLECTION -> {
-                if ((StringUtils.isNotBlank(BuildConfig.MOMO_COLLECTION_PRIMARY_KEY))) {
-                    BuildConfig.MOMO_COLLECTION_PRIMARY_KEY
-                } else {
-                    BuildConfig.MOMO_COLLECTION_SECONDARY_KEY
-                }
-            }
-
-            ProductType.REMITTANCE -> {
-                if (StringUtils.isNotBlank(BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY)) {
-                    BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY
-                } else {
-                    BuildConfig.MOMO_REMITTANCE_SECONDARY_KEY
-                }
-            }
-
-            ProductType.DISBURSEMENTS -> {
-                if (StringUtils.isNotBlank(BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY)) {
-                    BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY
-                } else {
-                    BuildConfig.MOMO_DISBURSEMENTS_SECONDARY_KEY
-                }
-            }
-        }
-        return productKey
-    }
 
     /**
      * Generates a MomoTransaction object from the given response.

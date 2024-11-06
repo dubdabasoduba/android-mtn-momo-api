@@ -76,7 +76,7 @@ open class AppMainViewModel @Inject constructor(
      * This method checks if the API user exists and creates a new one if it does not.
      */
     fun checkUser() {
-        val productType = settings.getProductSubscriptionKeys(ProductType.COLLECTION)
+        val productType = Utils.getProductSubscriptionKeys(ProductType.COLLECTION)
         viewModelScope.launch(Dispatchers.IO) {
             defaultRepository.checkApiUser(BuildConfig.MOMO_API_VERSION_V1, productType).collect { apiUser ->
                 when (apiUser) {
@@ -104,7 +104,7 @@ open class AppMainViewModel @Inject constructor(
      * This method retrieves the API key for the user and sets up basic authentication.
      */
     private fun createApiKey() {
-        val productType = settings.getProductSubscriptionKeys(ProductType.REMITTANCE)
+        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE)
         viewModelScope.launch(Dispatchers.IO) {
             val apiUserKey = this@AppMainViewModel.context.let { Utils.getApiKey(it) }
             if (StringUtils.isNotBlank(apiUserKey)) {
@@ -139,7 +139,7 @@ open class AppMainViewModel @Inject constructor(
      * This method checks if the access token is available and retrieves it if not.
      */
     private fun getAccessToken() {
-        val productType = settings.getProductSubscriptionKeys(productType = ProductType.REMITTANCE)
+        val productType = Utils.getProductSubscriptionKeys(productType = ProductType.REMITTANCE)
         viewModelScope.launch(Dispatchers.IO) {
             val apiUserKey = context.let { Utils.getApiKey(it) }
             val accessToken = context.let { Utils.getAccessToken(it) }

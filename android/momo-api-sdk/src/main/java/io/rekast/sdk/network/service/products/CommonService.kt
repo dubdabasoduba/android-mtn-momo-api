@@ -54,6 +54,27 @@ sealed interface CommonService {
     ): Response<BasicUserInfo>
 
     /**
+     * Makes a request to check the account holder status.
+     *
+     * @param productType The API Products ([MomoConstants.ProductTypes]).
+     * @param apiVersion The app Version (e.g., v1_0 or v2_0).
+     * @param accountHolderId The account holder unique ID (e.g., phone number).
+     * @param accountHolderType The account holder type (e.g., MSISDN).
+     * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
+     * @param environment The API environment (X-Target-Environment).
+     * @return A [ResponseBody] indicating the result of the account holder status check.
+     */
+    @GET(MomoConstants.EndPoints.VALIDATE_ACCOUNT_HOLDER_STATUS)
+    suspend fun validateAccountHolderStatus(
+        @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
+        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Path(MomoConstants.EndpointPaths.ACCOUNT_HOLDER_ID) accountHolderId: String,
+        @Path(MomoConstants.EndpointPaths.ACCOUNT_HOLDER_TYPE) accountHolderType: String,
+        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
+    ): Response<ResponseBody>
+
+    /**
      * Makes a request to get the Account Balance. This only works with the [ProductType.COLLECTION]. It seems to break with the other API product type.
      *
      * @param productType The API Products ([MomoConstants.ProductTypes]).
@@ -170,24 +191,4 @@ sealed interface CommonService {
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Response<ResponseBody>
 
-    /**
-     * Makes a request to check the account holder status.
-     *
-     * @param productType The API Products ([MomoConstants.ProductTypes]).
-     * @param apiVersion The app Version (e.g., v1_0 or v2_0).
-     * @param accountHolderId The account holder unique ID (e.g., phone number).
-     * @param accountHolderType The account holder type (e.g., MSISDN).
-     * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
-     * @param environment The API environment (X-Target-Environment).
-     * @return A [ResponseBody] indicating the result of the account holder status check.
-     */
-    @GET(MomoConstants.EndPoints.VALIDATE_ACCOUNT_HOLDER_STATUS)
-    suspend fun validateAccountHolderStatus(
-        @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
-        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Path(MomoConstants.EndpointPaths.ACCOUNT_HOLDER_ID) accountHolderId: String,
-        @Path(MomoConstants.EndpointPaths.ACCOUNT_HOLDER_TYPE) accountHolderType: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Response<ResponseBody>
 }

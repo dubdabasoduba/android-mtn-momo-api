@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2023-2024, Benjamin Mwalimu
  *
@@ -17,11 +18,13 @@ package io.rekast.sdk.sample.utils
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import io.rekast.sdk.model.authentication.AccessToken
-import io.rekast.sdk.sample.BuildConfig
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import org.apache.commons.lang3.StringUtils
+import io.rekast.sdk.model.authentication.AccessToken
+import io.rekast.sdk.sample.BuildConfig
+import io.rekast.sdk.utils.ProductType
+
 
 /**
  * Utility object providing various helper functions for the MTN MOMO SDK sample application.
@@ -115,5 +118,40 @@ object Utils {
     fun convertToDate(milliseconds: Long): String {
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
         return simpleDateFormat.format(milliseconds)
+    }
+
+    /**
+     * Retrieves the product subscription keys based on the specified product
+     *
+     * @param productType The MTN MOMO API product type.
+     * @return The corresponding product key as a String.
+     */
+    fun getProductSubscriptionKeys(productType: ProductType): String {
+        val productKey: String = when (productType) {
+            ProductType.COLLECTION -> {
+                if ((StringUtils.isNotBlank(BuildConfig.MOMO_COLLECTION_PRIMARY_KEY))) {
+                   BuildConfig.MOMO_COLLECTION_PRIMARY_KEY
+                } else {
+                   BuildConfig.MOMO_COLLECTION_SECONDARY_KEY
+                }
+            }
+
+            ProductType.REMITTANCE -> {
+                if (StringUtils.isNotBlank(io.rekast.sdk.BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY)) {
+                   BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY
+                } else {
+                   BuildConfig.MOMO_REMITTANCE_SECONDARY_KEY
+                }
+            }
+
+            ProductType.DISBURSEMENTS -> {
+                if (StringUtils.isNotBlank(io.rekast.sdk.BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY)) {
+                   BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY
+                } else {
+                   BuildConfig.MOMO_DISBURSEMENTS_SECONDARY_KEY
+                }
+            }
+        }
+        return productKey
     }
 }

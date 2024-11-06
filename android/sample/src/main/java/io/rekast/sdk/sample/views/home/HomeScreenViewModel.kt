@@ -59,7 +59,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun getBasicUserInfo() {
         showProgressBar.postValue(true)
-        val productType = settings.getProductSubscriptionKeys(ProductType.REMITTANCE)
+        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE)
 
         viewModelScope.launch(Dispatchers.IO) {
             if (StringUtils.isNotBlank(accessToken)) {
@@ -115,7 +115,7 @@ class HomeScreenViewModel @Inject constructor(
                     productType = ProductType.REMITTANCE.productType,
                     apiVersion = BuildConfig.MOMO_API_VERSION_V1,
                     accountHolder = accountHolder,
-                    productSubscriptionKey = settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                    productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE),
                     environment = BuildConfig.MOMO_ENVIRONMENT
                 ).collect { foundStatus ->
                     when (foundStatus) {
@@ -161,7 +161,7 @@ class HomeScreenViewModel @Inject constructor(
                     productType = ProductType.DISBURSEMENTS.productType,
                     apiVersion = BuildConfig.MOMO_API_VERSION_V1,
                     currency = "",
-                    productSubscriptionKey = settings.getProductSubscriptionKeys(ProductType.COLLECTION),
+                    productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.COLLECTION),
                     environment = BuildConfig.MOMO_ENVIRONMENT
                 ).collect { balance ->
                     when (balance) {
