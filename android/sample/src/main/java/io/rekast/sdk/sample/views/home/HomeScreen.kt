@@ -38,6 +38,7 @@ import io.rekast.sdk.model.AccountBalance
 import io.rekast.sdk.model.AccountHolderStatus
 import io.rekast.sdk.model.BasicUserInfo
 import io.rekast.sdk.sample.R
+import io.rekast.sdk.sample.ui.components.accountdetails.AccountBalanceComponent
 import io.rekast.sdk.sample.ui.components.accountdetails.AccountStatusComponent
 import io.rekast.sdk.sample.ui.components.accountdetails.BasicUserInfoComponent
 import io.rekast.sdk.sample.ui.components.general.CircularProgressBarComponent
@@ -95,6 +96,8 @@ fun MainScreen(
                     BasicUserInfoComponent(basicUserInfo = basicUserInfo)
                     Spacer(modifier = Modifier.height(30.dp))
                     AccountStatusComponent(accountHolderStatus = accountHolderStatus)
+                    Spacer(modifier = Modifier.height(30.dp))
+                    AccountBalanceComponent(accountBalance = accountBalance)
                 }
             } else {
                 CircularProgressBarComponent()

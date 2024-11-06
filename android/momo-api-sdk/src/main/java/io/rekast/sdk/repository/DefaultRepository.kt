@@ -159,36 +159,6 @@ class DefaultRepository @Inject constructor(
     }
 
     /**
-     * Gets the account balance of the entity/user initiating the transaction.
-     *
-     * @param currency The currency for which to get the account balance.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param accessToken The access token for authentication.
-     * @param apiVersion The version of the API to use.
-     * @param productType The type of product for which to get the account balance.
-     * @return A [Response] containing the [AccountBalance].
-     */
-    fun getAccountBalance(
-        productType: String,
-        apiVersion: String,
-        currency: String,
-        productSubscriptionKey: String,
-        environment: String
-    ): Flow<NetworkResult<AccountBalance>> {
-        return flow<NetworkResult<AccountBalance>> {
-            emit(
-                safeApiCall {
-                    if (StringUtils.isNotBlank(currency)) {
-                        defaultSource.getAccountBalanceInSpecificCurrency(productType = productType, apiVersion = apiVersion, currency = currency, productSubscriptionKey = productSubscriptionKey, environment = environment)
-                    } else {
-                        defaultSource.getAccountBalance(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment)
-                    }
-                }
-            )
-        }.flowOn(Dispatchers.IO)
-    }
-
-    /**
      * Retrieves the basic user information for a specified MTN MOMO user.
      *
      * @param accountHolder The identifier for the account holder.
@@ -207,6 +177,61 @@ class DefaultRepository @Inject constructor(
     ): Flow<NetworkResult<BasicUserInfo>> {
         return flow<NetworkResult<BasicUserInfo>> {
             emit(safeApiCall { defaultSource.getBasicUserInfo(productType = productType, apiVersion = apiVersion, accountHolder = accountHolder, productSubscriptionKey = productSubscriptionKey, environment = environment) })
+        }.flowOn(Dispatchers.IO)
+    }
+
+    /**
+     * Validates the status of an account holder.
+     *
+     * @param accountHolder The account holder details to validate.
+     * @param apiVersion The version of the API to use.
+     * @param productType The type of product for the validation.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param accessToken The access token for authentication.
+     * @return A [Response] indicating the result of the account holder status validation.
+     */
+    fun validateAccountHolderStatus(
+        productType: String,
+        apiVersion: String,
+        accountHolder: AccountHolder,
+        productSubscriptionKey: String,
+        environment: String
+    ): Flow<NetworkResult<ResponseBody>> {
+        return flow<NetworkResult<ResponseBody>> {
+            emit(safeApiCall { defaultSource.validateAccountHolderStatus(productType, apiVersion = apiVersion, accountHolder = accountHolder, productSubscriptionKey = productSubscriptionKey, environment = environment) })
+        }.flowOn(Dispatchers.IO)
+    }
+
+    /**
+     * Gets the account balance of the entity/user initiating the transaction. This only works with the [ProductType.COLLECTION]. It seems to break with the other API products.
+     * User EUR as the currency on sandbox
+     *
+     * @param currency The currency for which to get the account balance.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param accessToken The access token for authentication.
+     * @param apiVersion The version of the API to use.
+     * @param productType The type of product for which to get the account balance.
+     * @return A [Response] containing the [AccountBalance].
+     */
+    fun getAccountBalance(
+        productType: String,
+        apiVersion: String,
+        currency: String?,
+        productSubscriptionKey: String,
+        environment: String
+    ): Flow<NetworkResult<AccountBalance>> {
+        return flow<NetworkResult<AccountBalance>> {
+            emit(
+                safeApiCall {
+                    if (StringUtils.isNotBlank(currency)) {
+                        defaultSource.getAccountBalanceInSpecificCurrency(
+                            productType = productType, apiVersion = apiVersion, currency = currency.toString(), productSubscriptionKey = productSubscriptionKey, environment = environment
+                        )
+                    } else {
+                        defaultSource.getAccountBalance(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment)
+                    }
+                }
+            )
         }.flowOn(Dispatchers.IO)
     }
 
@@ -317,20 +342,6 @@ class DefaultRepository @Inject constructor(
                 }
             )
         }.flowOn(Dispatchers.IO)
-    }
-
-    /**
-     * Validates the status of an account holder.
-     *
-     * @param accountHolder The account holder details to validate.
-     * @param apiVersion The version of the API to use.
-     * @param productType The type of product for the validation.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param accessToken The access token for authentication.
-     * @return A [Response] indicating the result of the account holder status validation.
-     */
-    suspend fun validateAccountHolderStatus(productType: String, apiVersion: String, accountHolder: AccountHolder, productSubscriptionKey: String, environment: String): Response<ResponseBody> {
-        return defaultSource.validateAccountHolderStatus(productType, apiVersion, accountHolder, productSubscriptionKey, environment)
     }
 
     /**

@@ -19,16 +19,19 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.rekast.sdk.BuildConfig
 import io.rekast.sdk.model.AccountBalance
+import io.rekast.sdk.model.AccountHolder
 import io.rekast.sdk.model.AccountHolderStatus
 import io.rekast.sdk.model.BasicUserInfo
-import io.rekast.sdk.model.authentication.credentials.AccessTokenCredentials
 import io.rekast.sdk.repository.DefaultRepository
 import io.rekast.sdk.repository.data.NetworkResult
 import io.rekast.sdk.sample.utils.SnackBarComponentConfiguration
+import io.rekast.sdk.sample.utils.Utils
+import io.rekast.sdk.utils.AccountHolderType
 import io.rekast.sdk.utils.ProductType
 import io.rekast.sdk.utils.Settings
 import javax.inject.Inject
@@ -52,48 +55,40 @@ class HomeScreenViewModel @Inject constructor(
     var basicUserInfo: MutableLiveData<BasicUserInfo?> = MutableLiveData(null)
     var accountHolderStatus: MutableLiveData<AccountHolderStatus?> = MutableLiveData(null)
     var accountBalance: MutableLiveData<AccountBalance?> = MutableLiveData(null)
-
-    /**
-     * Sets the Access Token credentials.
-     *
-     * @param accessToken The access token.
-     */
-    fun setAccessToken(accessToken: String) {
-        val accessTokenCredentials = AccessTokenCredentials(accessToken)
-        viewModelScope.launch {
-            defaultRepository.setUpAccessTokenAuth(accessTokenCredentials)
-        }
-    }
+    val accessToken = context.let { Utils.getAccessToken(it) }
 
     fun getBasicUserInfo() {
         showProgressBar.postValue(true)
         val productType = settings.getProductSubscriptionKeys(ProductType.REMITTANCE)
 
         viewModelScope.launch(Dispatchers.IO) {
-            if (StringUtils.isNotBlank(defaultRepository.getAccessTokenAuth().accessToken)) {
+            if (StringUtils.isNotBlank(accessToken)) {
                 defaultRepository.getBasicUserInfo(
                     productType = ProductType.REMITTANCE.productType,
                     apiVersion = BuildConfig.MOMO_API_VERSION_V1,
                     accountHolder = "99733123459",
                     productSubscriptionKey = productType,
                     environment = BuildConfig.MOMO_ENVIRONMENT
-                ).collect { basicUserInfo ->
-                    when (basicUserInfo) {
+                ).collect { foundBasicUserInfo ->
+                    when (foundBasicUserInfo) {
                         is NetworkResult.Success -> {
-                            SnackBarComponentConfiguration(message = "Basic user info was fetched successfully")
+                            val userInfo = foundBasicUserInfo.response
+                            val date = Utils.convertToDate(userInfo?.updatedAt!!.toLong())
+                            userInfo.updatedAt = date
+                            basicUserInfo.postValue(userInfo)
+
                             Timber.d("Basic user info was fetched successfully")
                             showProgressBar.postValue(false)
-
                             emitSnackBarState(
                                 SnackBarComponentConfiguration(message = "Basic user info was fetched successfully")
                             )
                         }
 
                         is NetworkResult.Error -> {
-                            Timber.e("Basic user info was not fetched %s", basicUserInfo.message)
+                            Timber.e("Basic user info was not fetched %s", foundBasicUserInfo.message)
                             showProgressBar.postValue(false)
 
-                            val message = basicUserInfo.message
+                            val message = foundBasicUserInfo.message
                             emitSnackBarState(
                                 SnackBarComponentConfiguration(message = "Basic user info was not fetched $message")
                             )
@@ -108,157 +103,105 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-/*    fun getBasicUserInfo() {
-        showProgressBar.postValue(true)
-        val accessToken = context?.let { Utils.getAccessToken(it) }
-        if (StringUtils.isNotBlank(accessToken)) {
-            accessToken?.let {
-                momoAPi!!.getBasicUserInfo(
-                    "99733123459",
-                    Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
-                    it,
-                    BuildConfig.MOMO_API_VERSION_V1,
-                    ProductType.REMITTANCE.productType
-                ) { momoAPIResult ->
-                    when (momoAPIResult) {
-                        is MomoResponse.Success -> {
-                            val date = Utils.convertToDate(momoAPIResult.value.updatedAt.toLong())
-                            momoAPIResult.value.updatedAt = date
-                            basicUserInfo.postValue(momoAPIResult.value)
-                            showProgressBar.postValue(false)
-
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(message = "Basic ApiUser info fetched successfully")
-                            )
-                        }
-                        is MomoResponse.Failure -> {
-                            val momoAPIException = momoAPIResult.momoException
-                            showProgressBar.postValue(false)
-
-                            emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "${momoAPIException!!.message} " + "Basic ApiUser" +
-                                        " info not fetched! Please try again"
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-        } else {
-            showProgressBar.postValue(false)
-            emitSnackBarState(
-                SnackBarComponentConfiguration(
-                    message = "Expired access token! Please refresh the token"
-                )
-            )
-        }
-    }
-
     fun validateAccountHolderStatus() {
-        showProgressBar.postValue(true)
-        val accessToken = context?.let { Utils.getAccessToken(it) }
-        val accountHolder = AccountHolder(
-            partyId = "346736732646",
-            partyIdType = AccountHolderType.MSISDN.accountHolderType
-        )
-        if (StringUtils.isNotBlank(accessToken)) {
-            if (accessToken != null) {
-                momoAPi?.validateAccountHolderStatus(
-                    accountHolder,
-                    BuildConfig.MOMO_API_VERSION_V1,
-                    ProductType.REMITTANCE.productType,
-                    Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
-                    accessToken
-                ) { momoAPIResult ->
-                    when (momoAPIResult) {
-                        is MomoResponse.Success -> {
-                            val accountHolderStatus = Gson().fromJson(
-                                momoAPIResult.value!!.source().readUtf8(),
-                                AccountHolderStatus::class.java
-                            )
-                            _accountHolderStatus.postValue(accountHolderStatus)
-                            showProgressBar.postValue(false)
+        viewModelScope.launch(Dispatchers.IO) {
+            showProgressBar.postValue(true)
+            val accountHolder = AccountHolder(
+                partyId = "99733123459",
+                partyIdType = AccountHolderType.MSISDN.accountHolderType
+            )
+            if (StringUtils.isNotBlank(accessToken)) {
+                defaultRepository.validateAccountHolderStatus(
+                    productType = ProductType.REMITTANCE.productType,
+                    apiVersion = BuildConfig.MOMO_API_VERSION_V1,
+                    accountHolder = accountHolder,
+                    productSubscriptionKey = settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                    environment = BuildConfig.MOMO_ENVIRONMENT
+                ).collect { foundStatus ->
+                    when (foundStatus) {
+                        is NetworkResult.Success -> {
+                            val status = Gson().fromJson(foundStatus.response!!.source().readUtf8(), AccountHolderStatus::class.java)
+                            accountHolderStatus.postValue(status)
 
+                            Timber.d("Account Holder status was fetched successfully")
+                            showProgressBar.postValue(false)
                             emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "Account status fetched successfully"
-                                )
+                                SnackBarComponentConfiguration(message = "Account Holder status was fetched successfully")
                             )
                         }
-                        is MomoResponse.Failure -> {
-                            val momoAPIException = momoAPIResult.momoException
+                        is NetworkResult.Error -> {
+                            Timber.e("Account Holder status was not fetched %s", foundStatus.message)
                             showProgressBar.postValue(false)
 
+                            val message = foundStatus.message
                             emitSnackBarState(
-                                SnackBarComponentConfiguration(
-                                    message = "${momoAPIException!!.message} Account status not fetched!"
-                                )
+                                SnackBarComponentConfiguration(message = "Account Holder status was not fetched $message")
                             )
-                            Timber.d(momoAPIException)
                         }
+
+                        else -> { Timber.e("An error occurred!!") }
                     }
                 }
-            }
-        } else {
-            showProgressBar.postValue(false)
-            emitSnackBarState(
-                SnackBarComponentConfiguration(
-                    message = "Expired access token! Please refresh the token"
+            } else {
+                showProgressBar.postValue(false)
+                emitSnackBarState(
+                    SnackBarComponentConfiguration(
+                        message = "Expired access token! Please refresh the token"
+                    )
                 )
-            )
+            }
         }
     }
 
     fun getAccountBalance() {
-        showProgressBar.postValue(true)
-        val accessToken = context?.let { Utils.getAccessToken(it) }
-        if (StringUtils.isNotBlank(accessToken)) {
-            accessToken?.let {
-                momoAPi?.getBalance(
-                    Constants.SANDBOX_CURRENCY,
-                    Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
-                    it,
-                    BuildConfig.MOMO_API_VERSION_V1,
-                    ProductType.REMITTANCE.productType
-                ) { momoAPIResult ->
-                    when (momoAPIResult) {
-                        is MomoResponse.Success -> {
-                            val balance = momoAPIResult.value
-                            _accountBalance.postValue(balance)
-                            showProgressBar.postValue(false)
+        viewModelScope.launch(Dispatchers.IO) {
+            showProgressBar.postValue(true)
+            if (StringUtils.isNotBlank(accessToken)) {
+                defaultRepository.getAccountBalance(
+                    productType = ProductType.DISBURSEMENTS.productType,
+                    apiVersion = BuildConfig.MOMO_API_VERSION_V1,
+                    currency = "",
+                    productSubscriptionKey = settings.getProductSubscriptionKeys(ProductType.COLLECTION),
+                    environment = BuildConfig.MOMO_ENVIRONMENT
+                ).collect { balance ->
+                    when (balance) {
+                        is NetworkResult.Success<*> -> {
+                            val foundBalance = balance.response
+                            accountBalance.postValue(foundBalance)
 
+                            Timber.d("Account balance fetched successfully")
+                            showProgressBar.postValue(false)
                             emitSnackBarState(
                                 SnackBarComponentConfiguration(
                                     message = "Account balance fetched successfully"
                                 )
                             )
                         }
-                        is MomoResponse.Failure -> {
-                            val momoAPIException = momoAPIResult.momoException
+                        is NetworkResult.Error<*> -> {
                             showProgressBar.postValue(false)
 
+                            val message = balance.message
+                            Timber.e("Account balance not fetched! %s", message)
                             emitSnackBarState(
                                 SnackBarComponentConfiguration(
-                                    message = "${momoAPIException!!.message} Account balance not fetched!"
+                                    message = "Account balance not fetched! $message"
                                 )
                             )
-
-                            Timber.d(momoAPIException)
                         }
+
+                        else -> { Timber.e("An error occurred!!") }
                     }
                 }
-            }
-        } else {
-            showProgressBar.postValue(false)
-            emitSnackBarState(
-                SnackBarComponentConfiguration(
-                    message = "Expired access token! Please refresh the token"
+            } else {
+                showProgressBar.postValue(false)
+                emitSnackBarState(
+                    SnackBarComponentConfiguration(
+                        message = "Expired access token! Please refresh the token"
+                    )
                 )
-            )
+            }
         }
-    }*/
-
+    }
     private fun emitSnackBarState(snackBarComponentConfiguration: SnackBarComponentConfiguration) {
         viewModelScope.launch { _snackBarStateFlow.emit(snackBarComponentConfiguration) }
     }

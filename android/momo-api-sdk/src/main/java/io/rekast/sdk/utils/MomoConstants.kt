@@ -151,9 +151,9 @@ object MomoConstants {
         const val GET_ACCESS_TOKEN = "/{productType}/token/"
 
         /**
-         * Endpoint for transferring funds.
+         * Endpoint for retrieving basic user information.
          */
-        const val TRANSFER = "/{productType}/{apiVersion}/transfer"
+        const val GET_BASIC_USER_INFO = "/{productType}/{apiVersion}/accountholder/msisdn/{accountHolderId}/basicuserinfo"
 
         /**
          * Endpoint for retrieving account balance.
@@ -161,14 +161,19 @@ object MomoConstants {
         const val GET_ACCOUNT_BALANCE = "/{productType}/{apiVersion}/account/balance"
 
         /**
-         * Endpoint for retrieving basic user information.
+         * Endpoint for retrieving account balance in a specific currency.
          */
-        const val GET_BASIC_USER_INFO = "/{productType}/{apiVersion}/accountholder/msisdn/{accountHolderId}/basicuserinfo"
+        const val GET_ACCOUNT_BALANCE_IN_SPECIFIC_CURRENCY = "/{productType}/{apiVersion}/account/balance/{currency}"
 
         /**
          * Endpoint for retrieving user information with consent.
          */
         const val GET_USER_INFO_WITH_CONSENT = "/{productType}/oauth2/{apiVersion}/userinfo"
+
+        /**
+         * Endpoint for transferring funds.
+         */
+        const val TRANSFER = "/{productType}/{apiVersion}/transfer"
 
         /**
          * Endpoint for retrieving transfer status.
@@ -186,11 +191,6 @@ object MomoConstants {
          */
         const val VALIDATE_ACCOUNT_HOLDER_STATUS =
             "/{productType}/{apiVersion}/accountholder/{accountHolderIdType}/{accountHolderId}/active"
-
-        /**
-         * Endpoint for retrieving account balance in a specific currency.
-         */
-        const val GET_ACCOUNT_BALANCE_IN_SPECIFIC_CURRENCY = "/{productType}/{apiVersion}/account/balance/{currency}"
 
         /**
          * Endpoint for requesting to pay.

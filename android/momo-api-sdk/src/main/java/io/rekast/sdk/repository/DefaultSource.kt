@@ -112,7 +112,56 @@ class DefaultSource @Inject constructor(
     )
 
     /**
-     * Retrieves the account balance for a specified product type.
+     * Retrieves the basic user information for a specified MTN MOMO user.
+     *
+     * @param productType The type of product for which to retrieve the user information.
+     * @param apiVersion The version of the API to use.
+     * @param accountHolder The identifier for the account holder.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The API environment (e.g., production, sandbox).
+     * @return A [Response] containing the [BasicUserInfo] of the specified user.
+     */
+    suspend fun getBasicUserInfo(
+        productType: String,
+        apiVersion: String,
+        accountHolder: String,
+        productSubscriptionKey: String,
+        environment: String
+    ) = commonService.getBasicUserInfo(
+        productType = productType,
+        apiVersion = apiVersion,
+        accountHolder = accountHolder,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
+     * Validates the status of an account holder.
+     *
+     * @param productType The type of product for which to validate the account holder.
+     * @param apiVersion The version of the API to use.
+     * @param accountHolder The account holder details.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The API environment (e.g., production, sandbox).
+     * @return A [Response] indicating the result of the account holder status validation.
+     */
+    suspend fun validateAccountHolderStatus(
+        productType: String,
+        apiVersion: String,
+        accountHolder: AccountHolder,
+        productSubscriptionKey: String,
+        environment: String
+    ) = commonService.validateAccountHolderStatus(
+        productType = productType,
+        apiVersion = apiVersion,
+        accountHolderId = accountHolder.partyId,
+        accountHolderType = accountHolder.partyIdType,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
+     * Retrieves the account balance for a specified product type. This only works with the [ProductType.COLLECTION]. It seems to break with the other API product type.
      *
      * @param productType The type of product for which to retrieve the account balance.
      * @param apiVersion The version of the API to use.
@@ -133,7 +182,7 @@ class DefaultSource @Inject constructor(
     )
 
     /**
-     * Retrieves the account balance in a specific currency.
+     * Retrieves the account balance in a specific currency. This only works with the [ProductType.COLLECTION]. It seems to break with the other API product type.
      *
      * @param productType The type of product for which to retrieve the account balance.
      * @param apiVersion The version of the API to use.
@@ -152,30 +201,6 @@ class DefaultSource @Inject constructor(
         productType = productType,
         apiVersion = apiVersion,
         currency = currency,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
-    )
-
-    /**
-     * Retrieves the basic user information for a specified MTN MOMO user.
-     *
-     * @param productType The type of product for which to retrieve the user information.
-     * @param apiVersion The version of the API to use.
-     * @param accountHolder The identifier for the account holder.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The API environment (e.g., production, sandbox).
-     * @return A [Response] containing the [BasicUserInfo] of the specified user.
-     */
-    suspend fun getBasicUserInfo(
-        productType: String,
-        apiVersion: String,
-        accountHolder: String,
-        productSubscriptionKey: String,
-        environment: String
-    ) = commonService.getBasicUserInfo(
-        productType = productType,
-        apiVersion = apiVersion,
-        accountHolder = accountHolder,
         productSubscriptionKey = productSubscriptionKey,
         environment = environment
     )
@@ -276,31 +301,6 @@ class DefaultSource @Inject constructor(
         referenceId = referenceId,
         momoNotification = momoNotification,
         notificationMessage = momoNotification.notificationMessage,
-        productSubscriptionKey = productSubscriptionKey,
-        environment = environment
-    )
-
-    /**
-     * Validates the status of an account holder.
-     *
-     * @param productType The type of product for which to validate the account holder.
-     * @param apiVersion The version of the API to use.
-     * @param accountHolder The account holder details.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param environment The API environment (e.g., production, sandbox).
-     * @return A [Response] indicating the result of the account holder status validation.
-     */
-    suspend fun validateAccountHolderStatus(
-        productType: String,
-        apiVersion: String,
-        accountHolder: AccountHolder,
-        productSubscriptionKey: String,
-        environment: String
-    ) = commonService.validateAccountHolderStatus(
-        productType = productType,
-        apiVersion = apiVersion,
-        accountHolderId = accountHolder.partyId,
-        accountHolderType = accountHolder.partyIdType,
         productSubscriptionKey = productSubscriptionKey,
         environment = environment
     )

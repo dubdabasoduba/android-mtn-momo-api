@@ -35,23 +35,6 @@ import retrofit2.http.Path
  */
 sealed interface CommonService {
     /**
-     * Makes a request to get the Account Balance.
-     *
-     * @param productType The API Products ([MomoConstants.ProductTypes]).
-     * @param apiVersion The app Version (e.g., v1_0 or v2_0).
-     * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
-     * @param environment The API environment (X-Target-Environment).
-     * @return A [Response] containing the [AccountBalance].
-     */
-    @GET(MomoConstants.EndPoints.GET_ACCOUNT_BALANCE)
-    suspend fun getAccountBalance(
-        @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
-        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Response<AccountBalance>
-
-    /**
      * Makes a request to get the Basic ApiUser Info.
      *
      * @param productType The API Products ([MomoConstants.ProductTypes]).
@@ -69,6 +52,43 @@ sealed interface CommonService {
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Response<BasicUserInfo>
+
+    /**
+     * Makes a request to get the Account Balance. This only works with the [ProductType.COLLECTION]. It seems to break with the other API product type.
+     *
+     * @param productType The API Products ([MomoConstants.ProductTypes]).
+     * @param apiVersion The app Version (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
+     * @param environment The API environment (X-Target-Environment).
+     * @return A [Response] containing the [AccountBalance].
+     */
+    @GET(MomoConstants.EndPoints.GET_ACCOUNT_BALANCE)
+    suspend fun getAccountBalance(
+        @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
+        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
+    ): Response<AccountBalance>
+
+    /**
+     * Makes a request to get the Account Balance in a specific currency. This only works with the [ProductType.COLLECTION]. It seems to break with the other API product type.
+     * User EUR as the currency on sandbox
+     *
+     * @param productType The API Products ([MomoConstants.ProductTypes]).
+     * @param apiVersion The app Version (e.g., v1_0 or v2_0).
+     * @param currency The currency based on the ISO standard.
+     * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
+     * @param environment The API environment (X-Target-Environment).
+     * @return A [Response] containing the [AccountBalance].
+     */
+    @GET(MomoConstants.EndPoints.GET_ACCOUNT_BALANCE_IN_SPECIFIC_CURRENCY)
+    suspend fun getAccountBalanceInSpecificCurrency(
+        @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
+        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Path(MomoConstants.EndpointPaths.CURRENCY) currency: String,
+        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
+    ): Response<AccountBalance>
 
     /**
      * Makes a request to get the ApiUser Info with Consent.
@@ -170,23 +190,4 @@ sealed interface CommonService {
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Response<ResponseBody>
-
-    /**
-     * Makes a request to get the Account Balance in a specific currency.
-     *
-     * @param productType The API Products ([MomoConstants.ProductTypes]).
-     * @param apiVersion The app Version (e.g., v1_0 or v2_0).
-     * @param currency The currency based on the ISO standard.
-     * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
-     * @param environment The API environment (X-Target-Environment).
-     * @return A [Response] containing the [AccountBalance].
-     */
-    @GET(MomoConstants.EndPoints.GET_ACCOUNT_BALANCE_IN_SPECIFIC_CURRENCY)
-    suspend fun getAccountBalanceInSpecificCurrency(
-        @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
-        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Path(MomoConstants.EndpointPaths.CURRENCY) currency: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Response<AccountBalance>
 }
