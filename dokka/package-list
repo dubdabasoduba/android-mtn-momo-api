@@ -24,7 +24,6 @@ io.rekast.sdk.sample.ui.components.screens
 io.rekast.sdk.sample.ui.navigation.drawer
 io.rekast.sdk.sample.ui.navigation.navigation
 io.rekast.sdk.sample.ui.navigation.topbar
-io.rekast.sdk.sample.ui.splash
 io.rekast.sdk.sample.ui.theme
 io.rekast.sdk.sample.utils
 io.rekast.sdk.sample.utils.annotation
@@ -35,3 +34,4 @@ io.rekast.sdk.sample.views.disbursement.deposit
 io.rekast.sdk.sample.views.disbursement.refund
 io.rekast.sdk.sample.views.home
 io.rekast.sdk.sample.views.remittance
+io.rekast.sdk.sample.views.splash
