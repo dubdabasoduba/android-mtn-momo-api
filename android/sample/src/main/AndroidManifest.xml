@@ -16,7 +16,7 @@
         tools:replace="android:theme"
         tools:targetApi="31">
         <activity
-            android:name=".ui.splash.SplashScreenActivity"
+            android:name=".views.splash.SplashScreenActivity"
             android:exported="true"
             android:theme="@style/Theme.MTNMomoAPI.NoActionBar">
             <intent-filter>

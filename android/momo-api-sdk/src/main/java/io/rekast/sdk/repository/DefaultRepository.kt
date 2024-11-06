@@ -29,7 +29,6 @@ import io.rekast.sdk.model.authentication.ApiUser
 import io.rekast.sdk.model.authentication.credentials.AccessTokenCredentials
 import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
 import io.rekast.sdk.network.service.products.CollectionService
-import io.rekast.sdk.network.service.products.CommonService
 import io.rekast.sdk.network.service.products.DisbursementsService
 import io.rekast.sdk.repository.data.DataResponse
 import io.rekast.sdk.repository.data.NetworkResult
@@ -59,7 +58,6 @@ import retrofit2.Response
 @Singleton
 class DefaultRepository @Inject constructor(
     private val defaultSource: DefaultSource,
-    private val commonService: CommonService,
     private val disbursementsService: DisbursementsService,
     private val collection: CollectionService,
     private val basicAuthCredentialsT: BasicAuthCredentials,
@@ -161,36 +159,6 @@ class DefaultRepository @Inject constructor(
     }
 
     /**
-     * Gets the account balance of the entity/user initiating the transaction.
-     *
-     * @param currency The currency for which to get the account balance.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param accessToken The access token for authentication.
-     * @param apiVersion The version of the API to use.
-     * @param productType The type of product for which to get the account balance.
-     * @return A [Response] containing the [AccountBalance].
-     */
-    suspend fun getAccountBalance(
-        currency: String?,
-        productSubscriptionKey: String,
-        accessToken: String,
-        apiVersion: String,
-        productType: String
-    ): Response<AccountBalance> {
-        return if (StringUtils.isNotBlank(currency)) {
-            commonService.getAccountBalanceInSpecificCurrency(
-                currency.toString(),
-                productType,
-                apiVersion,
-                productSubscriptionKey,
-                BuildConfig.MOMO_ENVIRONMENT
-            )
-        } else {
-            commonService.getAccountBalance(productType, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
-        }
-    }
-
-    /**
      * Retrieves the basic user information for a specified MTN MOMO user.
      *
      * @param accountHolder The identifier for the account holder.
@@ -200,14 +168,71 @@ class DefaultRepository @Inject constructor(
      * @param productType The type of product for which to retrieve the user information.
      * @return A [Response] containing the [BasicUserInfo] of the specified user.
      */
-    suspend fun getBasicUserInfo(
+    fun getBasicUserInfo(
+        productType: String,
+        apiVersion: String,
         accountHolder: String,
         productSubscriptionKey: String,
-        accessToken: String,
+        environment: String
+    ): Flow<NetworkResult<BasicUserInfo>> {
+        return flow<NetworkResult<BasicUserInfo>> {
+            emit(safeApiCall { defaultSource.getBasicUserInfo(productType = productType, apiVersion = apiVersion, accountHolder = accountHolder, productSubscriptionKey = productSubscriptionKey, environment = environment) })
+        }.flowOn(Dispatchers.IO)
+    }
+
+    /**
+     * Validates the status of an account holder.
+     *
+     * @param accountHolder The account holder details to validate.
+     * @param apiVersion The version of the API to use.
+     * @param productType The type of product for the validation.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param accessToken The access token for authentication.
+     * @return A [Response] indicating the result of the account holder status validation.
+     */
+    fun validateAccountHolderStatus(
+        productType: String,
         apiVersion: String,
-        productType: String
-    ): Response<BasicUserInfo> {
-        return commonService.getBasicUserInfo(accountHolder, productType, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
+        accountHolder: AccountHolder,
+        productSubscriptionKey: String,
+        environment: String
+    ): Flow<NetworkResult<ResponseBody>> {
+        return flow<NetworkResult<ResponseBody>> {
+            emit(safeApiCall { defaultSource.validateAccountHolderStatus(productType, apiVersion = apiVersion, accountHolder = accountHolder, productSubscriptionKey = productSubscriptionKey, environment = environment) })
+        }.flowOn(Dispatchers.IO)
+    }
+
+    /**
+     * Gets the account balance of the entity/user initiating the transaction. This only works with the [ProductType.COLLECTION]. It seems to break with the other API products.
+     * User EUR as the currency on sandbox
+     *
+     * @param currency The currency for which to get the account balance.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param accessToken The access token for authentication.
+     * @param apiVersion The version of the API to use.
+     * @param productType The type of product for which to get the account balance.
+     * @return A [Response] containing the [AccountBalance].
+     */
+    fun getAccountBalance(
+        productType: String,
+        apiVersion: String,
+        currency: String?,
+        productSubscriptionKey: String,
+        environment: String
+    ): Flow<NetworkResult<AccountBalance>> {
+        return flow<NetworkResult<AccountBalance>> {
+            emit(
+                safeApiCall {
+                    if (StringUtils.isNotBlank(currency)) {
+                        defaultSource.getAccountBalanceInSpecificCurrency(
+                            productType = productType, apiVersion = apiVersion, currency = currency.toString(), productSubscriptionKey = productSubscriptionKey, environment = environment
+                        )
+                    } else {
+                        defaultSource.getAccountBalance(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment)
+                    }
+                }
+            )
+        }.flowOn(Dispatchers.IO)
     }
 
     /**
@@ -220,12 +245,14 @@ class DefaultRepository @Inject constructor(
      * @return A [Response] containing the [UserInfoWithConsent] of the specified user.
      */
     suspend fun getUserInfoWithConsent(
-        productSubscriptionKey: String,
-        accessToken: String,
+        productType: String,
         apiVersion: String,
-        productType: String
-    ): Response<UserInfoWithConsent> {
-        return commonService.getUserInfoWithConsent(productType, apiVersion, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
+        productSubscriptionKey: String,
+        environment: String
+    ): Flow<NetworkResult<UserInfoWithConsent>> {
+        return flow<NetworkResult<UserInfoWithConsent>> {
+            emit(safeApiCall { defaultSource.getUserInfoWithConsent(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment) })
+        }.flowOn(Dispatchers.IO)
     }
 
     /**
@@ -240,14 +267,20 @@ class DefaultRepository @Inject constructor(
      * @return A [Response] indicating the result of the transfer request.
      */
     suspend fun transfer(
-        accessToken: String,
-        momoTransaction: MomoTransaction,
-        apiVersion: String,
         productType: String,
+        apiVersion: String,
+        momoTransaction: MomoTransaction,
+        uuid: String,
         productSubscriptionKey: String,
-        uuid: String
-    ): Response<Unit> {
-        return commonService.transfer(momoTransaction, apiVersion, productType, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT, uuid)
+        environment: String
+    ): Flow<NetworkResult<Unit>> {
+        return flow<NetworkResult<Unit>> {
+            emit(
+                safeApiCall {
+                    defaultSource.transfer(productType = productType, apiVersion = apiVersion, momoTransaction = momoTransaction, uuid = uuid, productSubscriptionKey = productSubscriptionKey, environment = environment)
+                }
+            )
+        }.flowOn(Dispatchers.IO)
     }
 
     /**
@@ -261,13 +294,19 @@ class DefaultRepository @Inject constructor(
      * @return A [Response] containing the status of the transfer.
      */
     suspend fun getTransferStatus(
-        referenceId: String,
-        apiVersion: String,
         productType: String,
+        apiVersion: String,
+        referenceId: String,
         productSubscriptionKey: String,
-        accessToken: String
-    ): Response<ResponseBody> {
-        return commonService.getTransferStatus(referenceId, apiVersion, productType, productSubscriptionKey, BuildConfig.MOMO_ENVIRONMENT)
+        environment: String
+    ): Flow<NetworkResult<ResponseBody>> {
+        return flow<NetworkResult<ResponseBody>> {
+            emit(
+                safeApiCall {
+                    defaultSource.getTransferStatus(productType = productType, apiVersion = apiVersion, referenceId = referenceId, productSubscriptionKey = productSubscriptionKey, environment = environment)
+                }
+            )
+        }.flowOn(Dispatchers.IO)
     }
 
     /**
@@ -282,49 +321,27 @@ class DefaultRepository @Inject constructor(
      * @return A [Response] indicating the result of the payment request.
      */
     suspend fun requestToPayDeliveryNotification(
-        momoNotification: MomoNotification,
+        productType: String,
+        apiVersion: String,
         referenceId: String,
-        apiVersion: String,
-        productType: String,
+        momoNotification: MomoNotification,
         productSubscriptionKey: String,
-        accessToken: String
-    ): Response<ResponseBody> {
-        return commonService.requestToPayDeliveryNotification(
-            momoNotification,
-            referenceId,
-            apiVersion,
-            productType,
-            productSubscriptionKey,
-            BuildConfig.MOMO_ENVIRONMENT,
-            momoNotification.notificationMessage
-        )
-    }
-
-    /**
-     * Validates the status of an account holder.
-     *
-     * @param accountHolder The account holder details to validate.
-     * @param apiVersion The version of the API to use.
-     * @param productType The type of product for the validation.
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param accessToken The access token for authentication.
-     * @return A [Response] indicating the result of the account holder status validation.
-     */
-    suspend fun validateAccountHolderStatus(
-        accountHolder: AccountHolder,
-        apiVersion: String,
-        productType: String,
-        productSubscriptionKey: String,
-        accessToken: String
-    ): Response<ResponseBody> {
-        return commonService.validateAccountHolderStatus(
-            accountHolder.partyId,
-            accountHolder.partyIdType,
-            apiVersion,
-            productType,
-            productSubscriptionKey,
-            BuildConfig.MOMO_ENVIRONMENT
-        )
+        environment: String
+    ): Flow<NetworkResult<ResponseBody>> {
+        return flow<NetworkResult<ResponseBody>> {
+            emit(
+                safeApiCall {
+                    defaultSource.requestToPayDeliveryNotification(
+                        productType = productType,
+                        apiVersion = apiVersion,
+                        referenceId = referenceId,
+                        momoNotification = momoNotification,
+                        productSubscriptionKey = productSubscriptionKey,
+                        environment = environment
+                    )
+                }
+            )
+        }.flowOn(Dispatchers.IO)
     }
 
     /**

@@ -51,7 +51,7 @@ class BasicAuthenticationInterceptor @Inject constructor(
         val request = chain.request().newBuilder()
 
         if (apiUserId.isNotEmpty() && apiKey.isNotEmpty()) {
-            Timber.tag("BasicAuthInterceptor").d("API User ID: $apiUserId, API Key: $apiKey")
+            Timber.d("API User ID: $apiUserId, API Key: $apiKey")
             val keys = "$apiUserId:$apiKey"
 
             return chain.proceed(
