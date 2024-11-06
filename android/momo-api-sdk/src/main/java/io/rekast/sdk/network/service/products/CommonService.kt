@@ -190,5 +190,4 @@ sealed interface CommonService {
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Response<ResponseBody>
-
 }

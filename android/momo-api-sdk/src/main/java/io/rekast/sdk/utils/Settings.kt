@@ -16,7 +16,6 @@
 package io.rekast.sdk.utils
 
 import com.google.gson.Gson
-import io.rekast.sdk.BuildConfig
 import io.rekast.sdk.model.MomoTransaction
 import java.util.*
 import javax.inject.Inject
@@ -72,7 +71,6 @@ class Settings @Inject constructor() {
             phoneNumber
         }
     }
-
 
     /**
      * Generates a MomoTransaction object from the given response.

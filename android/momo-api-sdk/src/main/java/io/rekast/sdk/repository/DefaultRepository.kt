@@ -225,7 +225,11 @@ class DefaultRepository @Inject constructor(
                 safeApiCall {
                     if (StringUtils.isNotBlank(currency)) {
                         defaultSource.getAccountBalanceInSpecificCurrency(
-                            productType = productType, apiVersion = apiVersion, currency = currency.toString(), productSubscriptionKey = productSubscriptionKey, environment = environment
+                            productType = productType,
+                            apiVersion = apiVersion,
+                            currency = currency.toString(),
+                            productSubscriptionKey = productSubscriptionKey,
+                            environment = environment
                         )
                     } else {
                         defaultSource.getAccountBalance(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment)

@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2023-2024, Benjamin Mwalimu
  *
@@ -18,13 +17,12 @@ package io.rekast.sdk.sample.utils
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import org.apache.commons.lang3.StringUtils
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.sample.BuildConfig
 import io.rekast.sdk.utils.ProductType
-
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import org.apache.commons.lang3.StringUtils
 
 /**
  * Utility object providing various helper functions for the MTN MOMO SDK sample application.
@@ -130,25 +128,25 @@ object Utils {
         val productKey: String = when (productType) {
             ProductType.COLLECTION -> {
                 if ((StringUtils.isNotBlank(BuildConfig.MOMO_COLLECTION_PRIMARY_KEY))) {
-                   BuildConfig.MOMO_COLLECTION_PRIMARY_KEY
+                    BuildConfig.MOMO_COLLECTION_PRIMARY_KEY
                 } else {
-                   BuildConfig.MOMO_COLLECTION_SECONDARY_KEY
+                    BuildConfig.MOMO_COLLECTION_SECONDARY_KEY
                 }
             }
 
             ProductType.REMITTANCE -> {
                 if (StringUtils.isNotBlank(io.rekast.sdk.BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY)) {
-                   BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY
+                    BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY
                 } else {
-                   BuildConfig.MOMO_REMITTANCE_SECONDARY_KEY
+                    BuildConfig.MOMO_REMITTANCE_SECONDARY_KEY
                 }
             }
 
             ProductType.DISBURSEMENTS -> {
                 if (StringUtils.isNotBlank(io.rekast.sdk.BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY)) {
-                   BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY
+                    BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY
                 } else {
-                   BuildConfig.MOMO_DISBURSEMENTS_SECONDARY_KEY
+                    BuildConfig.MOMO_DISBURSEMENTS_SECONDARY_KEY
                 }
             }
         }
