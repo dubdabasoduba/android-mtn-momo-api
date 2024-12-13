@@ -17,6 +17,12 @@ package io.rekast.sdk.model.authentication.credentials
 
 import javax.inject.Inject
 
+/**
+ * Data class representing the access token credentials used for authentication
+ * with the MTN MOMO API.
+ *
+ * @property accessToken The access token string used to authenticate API requests.
+ */
 data class AccessTokenCredentials @Inject constructor(
     var accessToken: String
 )

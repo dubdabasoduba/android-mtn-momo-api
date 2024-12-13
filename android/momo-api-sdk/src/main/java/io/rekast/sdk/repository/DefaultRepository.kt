@@ -26,6 +26,7 @@ import io.rekast.sdk.model.UserInfoWithConsent
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.ApiKey
 import io.rekast.sdk.model.authentication.ApiUser
+import io.rekast.sdk.model.authentication.Oauth2AccessToken
 import io.rekast.sdk.model.authentication.credentials.AccessTokenCredentials
 import io.rekast.sdk.model.authentication.credentials.BasicAuthCredentials
 import io.rekast.sdk.network.service.products.CollectionService
@@ -48,8 +49,7 @@ import retrofit2.Response
  * This class holds all the common API methods for various MTN MOMO products, including
  * user management, transaction processing, and status checks.
  *
- * @property authenticationService The service for handling authentication-related API calls.
- * @property commonService The service for common API calls.
+ * @property defaultSource The source for handling API calls related to user management and authentication.
  * @property disbursementsService The service for disbursement-related API calls.
  * @property collection The service for collection-related API calls.
  * @property basicAuthCredentialsT The credentials for basic authentication.
@@ -83,10 +83,20 @@ class DefaultRepository @Inject constructor(
         accessTokenCredentialsT.accessToken = accessTokenCredentials.accessToken
     }
 
+    /**
+     * Retrieves the current basic authentication credentials.
+     *
+     * @return The current [BasicAuthCredentials].
+     */
     fun getBasicAuth(): BasicAuthCredentials {
         return basicAuthCredentialsT
     }
 
+    /**
+     * Retrieves the current access token authentication credentials.
+     *
+     * @return The current [AccessTokenCredentials].
+     */
     fun getAccessTokenAuth(): AccessTokenCredentials {
         return accessTokenCredentialsT
     }
@@ -94,10 +104,11 @@ class DefaultRepository @Inject constructor(
     /**
      * Creates a new API user.
      *
+     * @param providerCallBackHost The callback host for the provider.
      * @param apiVersion The version of the API to use.
      * @param uuid A unique identifier for the request.
      * @param productSubscriptionKey The subscription key for the product.
-     * @return A [Response] containing the created [Unit].
+     * @return A [Flow] emitting a [NetworkResult] containing the created [ApiUser].
      */
     fun createApiUser(
         providerCallBackHost: ProviderCallBackHost,
@@ -115,7 +126,7 @@ class DefaultRepository @Inject constructor(
      *
      * @param apiVersion The version of the API to use.
      * @param productSubscriptionKey The subscription key for the product.
-     * @return A [Response] containing the [ApiUser] if found.
+     * @return A [Flow] emitting a [NetworkResult] containing the [ApiUser] if found.
      */
     fun checkApiUser(
         apiVersion: String,
@@ -131,7 +142,7 @@ class DefaultRepository @Inject constructor(
      *
      * @param apiVersion The version of the API to use.
      * @param productSubscriptionKey The subscription key for the product.
-     * @return A [Response] containing the created [ApiKey].
+     * @return A [Flow] emitting a [NetworkResult] containing the [ApiKey].
      */
     fun createApiKey(
         apiVersion: String,
@@ -159,6 +170,23 @@ class DefaultRepository @Inject constructor(
     }
 
     /**
+     * Gets the Access Token based on the ApiUser ID, OCP Subscription Id, and the API Key.
+     *
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param productType The type of product for which to obtain the access token.
+     * @return A [Response] containing the obtained [AccessToken].
+     */
+    fun getOauthAccessToken(
+        productType: String,
+        productSubscriptionKey: String,
+        environment: String
+    ): Flow<NetworkResult<Oauth2AccessToken>> {
+        return flow<NetworkResult<Oauth2AccessToken>> {
+            emit(safeApiCall { defaultSource.getOauth2AccessToken(productType = productType, productSubscriptionKey = productSubscriptionKey, environment = environment) })
+        }.flowOn(Dispatchers.IO)
+    }
+
+    /**
      * Retrieves the basic user information for a specified MTN MOMO user.
      *
      * @param accountHolder The identifier for the account holder.
@@ -177,6 +205,26 @@ class DefaultRepository @Inject constructor(
     ): Flow<NetworkResult<BasicUserInfo>> {
         return flow<NetworkResult<BasicUserInfo>> {
             emit(safeApiCall { defaultSource.getBasicUserInfo(productType = productType, apiVersion = apiVersion, accountHolder = accountHolder, productSubscriptionKey = productSubscriptionKey, environment = environment) })
+        }.flowOn(Dispatchers.IO)
+    }
+
+    /**
+     * Retrieves the user information for a specified MTN MOMO user with consent.
+     *
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param accessToken The access token for authentication.
+     * @param apiVersion The version of the API to use.
+     * @param productType The type of product for which to retrieve the user information.
+     * @return A [Response] containing the [UserInfoWithConsent] of the specified user.
+     */
+    fun getUserInfoWithConsent(
+        productType: String,
+        apiVersion: String,
+        productSubscriptionKey: String,
+        environment: String
+    ): Flow<NetworkResult<UserInfoWithConsent>> {
+        return flow<NetworkResult<UserInfoWithConsent>> {
+            emit(safeApiCall { defaultSource.getUserInfoWithConsent(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment) })
         }.flowOn(Dispatchers.IO)
     }
 
@@ -225,33 +273,17 @@ class DefaultRepository @Inject constructor(
                 safeApiCall {
                     if (StringUtils.isNotBlank(currency)) {
                         defaultSource.getAccountBalanceInSpecificCurrency(
-                            productType = productType, apiVersion = apiVersion, currency = currency.toString(), productSubscriptionKey = productSubscriptionKey, environment = environment
+                            productType = productType,
+                            apiVersion = apiVersion,
+                            currency = currency.toString(),
+                            productSubscriptionKey = productSubscriptionKey,
+                            environment = environment
                         )
                     } else {
                         defaultSource.getAccountBalance(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment)
                     }
                 }
             )
-        }.flowOn(Dispatchers.IO)
-    }
-
-    /**
-     * Retrieves the user information for a specified MTN MOMO user with consent.
-     *
-     * @param productSubscriptionKey The subscription key for the product.
-     * @param accessToken The access token for authentication.
-     * @param apiVersion The version of the API to use.
-     * @param productType The type of product for which to retrieve the user information.
-     * @return A [Response] containing the [UserInfoWithConsent] of the specified user.
-     */
-    suspend fun getUserInfoWithConsent(
-        productType: String,
-        apiVersion: String,
-        productSubscriptionKey: String,
-        environment: String
-    ): Flow<NetworkResult<UserInfoWithConsent>> {
-        return flow<NetworkResult<UserInfoWithConsent>> {
-            emit(safeApiCall { defaultSource.getUserInfoWithConsent(productType = productType, apiVersion = apiVersion, productSubscriptionKey = productSubscriptionKey, environment = environment) })
         }.flowOn(Dispatchers.IO)
     }
 
@@ -266,7 +298,7 @@ class DefaultRepository @Inject constructor(
      * @param uuid A unique identifier for the request.
      * @return A [Response] indicating the result of the transfer request.
      */
-    suspend fun transfer(
+    fun transfer(
         productType: String,
         apiVersion: String,
         momoTransaction: MomoTransaction,
@@ -293,7 +325,7 @@ class DefaultRepository @Inject constructor(
      * @param accessToken The access token for authentication.
      * @return A [Response] containing the status of the transfer.
      */
-    suspend fun getTransferStatus(
+    fun getTransferStatus(
         productType: String,
         apiVersion: String,
         referenceId: String,
@@ -320,7 +352,7 @@ class DefaultRepository @Inject constructor(
      * @param accessToken The access token for authentication.
      * @return A [Response] indicating the result of the payment request.
      */
-    suspend fun requestToPayDeliveryNotification(
+    fun requestToPayDeliveryNotification(
         productType: String,
         apiVersion: String,
         referenceId: String,

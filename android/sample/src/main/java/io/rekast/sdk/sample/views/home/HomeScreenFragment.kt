@@ -84,6 +84,12 @@ class HomeScreenFragment : Fragment() {
             homeScreenViewModel.validateAccountHolderStatus()
             homeScreenViewModel.getAccountBalance()
         }
+
+        val oauthAccessToken = Utils.getOauthAccessToken(activity.applicationContext)
+        setAccessToken(oauthAccessToken)
+        homeScreenViewModel.viewModelScope.launch(dispatcherProvider.io()) {
+            homeScreenViewModel.getUserInfoWithConsent()
+        }
     }
 
     /**
