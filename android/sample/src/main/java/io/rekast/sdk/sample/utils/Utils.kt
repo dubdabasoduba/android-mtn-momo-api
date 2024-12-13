@@ -18,10 +18,29 @@ package io.rekast.sdk.sample.utils
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import io.rekast.sdk.model.authentication.AccessToken
+import io.rekast.sdk.model.authentication.Oauth2AccessToken
 import io.rekast.sdk.sample.BuildConfig
+import io.rekast.sdk.utils.ProductType
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import org.apache.commons.lang3.StringUtils
+
+private const val API_KEY = "apiKey"
+
+object AccessTokenConstants {
+    const val ACCESS_TOKEN = "accessToken"
+    const val EXPIRY_DATE = "expiryDate"
+    const val TOKEN_TYPE = "tokenType"
+}
+
+object Oauth2AccessTokenConstants {
+    const val ACCESS_TOKEN = "oauthAccessToken"
+    const val EXPIRY_DATE = "oauthExpiryDate"
+    const val TOKEN_TYPE = "oauthTokenType"
+    const val SCOPE = "scope"
+    const val REFRESH_TOKEN = "refreshToken"
+    const val REFRESH_TOKEN_EXPIRED_IN = "refreshTokenExpiredIn"
+}
 
 /**
  * Utility object providing various helper functions for the MTN MOMO SDK sample application.
@@ -40,7 +59,7 @@ object Utils {
         val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
         val editor = mSettings.edit()
 
-        editor.putString("apiKey", apiKey)
+        editor.putString(API_KEY, apiKey)
         editor.apply()
     }
 
@@ -52,7 +71,7 @@ object Utils {
      */
     fun getApiKey(context: Context): String {
         val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
-        return mSettings.getString("apiKey", "").toString()
+        return mSettings.getString(API_KEY, "").toString()
     }
 
     /**
@@ -65,16 +84,37 @@ object Utils {
         val tokenExpiry = if (StringUtils.isNotBlank(accessToken!!.expiresIn)) {
             accessToken.expiresIn.toIntOrNull()
         } else { 1 }
-        val cal = Calendar.getInstance()
-        cal.add(Calendar.MINUTE, tokenExpiry!!)
-        val oneHourAfter = cal.timeInMillis
 
         val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
         val editor = mSettings.edit()
 
-        editor.putString("accessToken", accessToken.accessToken)
-        editor.putLong("expiryDate", oneHourAfter)
-        editor.putString("tokenType", accessToken.tokenType)
+        editor.putString(AccessTokenConstants.ACCESS_TOKEN, accessToken.accessToken)
+        editor.putLong(AccessTokenConstants.EXPIRY_DATE, returnExpiryINMilliseconds(tokenExpiry))
+        editor.putString(AccessTokenConstants.TOKEN_TYPE, accessToken.tokenType)
+        editor.apply()
+    }
+
+    fun saveOauth2AccessToken(context: Context, oauth2AccessToken: Oauth2AccessToken?) {
+        val accessTokenExpiry = if (StringUtils.isNotBlank(oauth2AccessToken!!.expiresIn)) {
+            oauth2AccessToken.expiresIn.toIntOrNull()
+        } else {
+            1
+        }
+        val refreshTokenExpiry = if (StringUtils.isNotBlank(oauth2AccessToken!!.refreshTokenExpiredIn)) {
+            oauth2AccessToken.refreshTokenExpiredIn.toIntOrNull()
+        } else {
+            1
+        }
+
+        val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
+        val editor = mSettings.edit()
+
+        editor.putString(Oauth2AccessTokenConstants.ACCESS_TOKEN, oauth2AccessToken.accessToken)
+        editor.putLong(Oauth2AccessTokenConstants.EXPIRY_DATE, returnExpiryINMilliseconds(accessTokenExpiry))
+        editor.putString(Oauth2AccessTokenConstants.TOKEN_TYPE, oauth2AccessToken.tokenType)
+        editor.putString(Oauth2AccessTokenConstants.SCOPE, oauth2AccessToken.scope)
+        editor.putString(Oauth2AccessTokenConstants.REFRESH_TOKEN, oauth2AccessToken.refreshToken)
+        editor.putLong(Oauth2AccessTokenConstants.REFRESH_TOKEN_EXPIRED_IN, returnExpiryINMilliseconds(refreshTokenExpiry))
         editor.apply()
     }
 
@@ -85,12 +125,33 @@ object Utils {
      * @return The saved access token as a String, or an empty string if expired or not found.
      */
     fun getAccessToken(context: Context): String {
-        return if (expired(context)) {
+        val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
+        val expiryTime = mSettings.getLong(AccessTokenConstants.EXPIRY_DATE, 0)
+
+        return if (expired(expiryTime)) {
             ""
         } else {
             val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
-            mSettings.getString("accessToken", "").toString()
+            mSettings.getString(AccessTokenConstants.ACCESS_TOKEN, "").toString()
         }
+    }
+
+    fun getOauthAccessToken(context: Context): String {
+        val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
+        val expiryTime = mSettings.getLong(Oauth2AccessTokenConstants.EXPIRY_DATE, 0)
+
+        return if (expired(expiryTime)) {
+            ""
+        } else {
+            val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
+            mSettings.getString(Oauth2AccessTokenConstants.ACCESS_TOKEN, "").toString()
+        }
+    }
+
+    private fun returnExpiryINMilliseconds(date: Int?): Long {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.MINUTE, date!!)
+        return calendar.timeInMillis
     }
 
     /**
@@ -99,9 +160,7 @@ object Utils {
      * @param context The context used to access shared preferences.
      * @return True if the token is expired, false otherwise.
      */
-    private fun expired(context: Context): Boolean {
-        val mSettings = context.getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE)
-        val expiryTime = mSettings.getLong("expiryDate", 0)
+    private fun expired(expiryTime: Long): Boolean {
         val currentTime = Calendar.getInstance().timeInMillis
         return currentTime > expiryTime
     }
@@ -115,5 +174,40 @@ object Utils {
     fun convertToDate(milliseconds: Long): String {
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
         return simpleDateFormat.format(milliseconds)
+    }
+
+    /**
+     * Retrieves the product subscription keys based on the specified product
+     *
+     * @param productType The MTN MOMO API product type.
+     * @return The corresponding product key as a String.
+     */
+    fun getProductSubscriptionKeys(productType: ProductType): String {
+        val productKey: String = when (productType) {
+            ProductType.COLLECTION -> {
+                if ((StringUtils.isNotBlank(BuildConfig.MOMO_COLLECTION_PRIMARY_KEY))) {
+                    BuildConfig.MOMO_COLLECTION_PRIMARY_KEY
+                } else {
+                    BuildConfig.MOMO_COLLECTION_SECONDARY_KEY
+                }
+            }
+
+            ProductType.REMITTANCE -> {
+                if (StringUtils.isNotBlank(io.rekast.sdk.BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY)) {
+                    BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY
+                } else {
+                    BuildConfig.MOMO_REMITTANCE_SECONDARY_KEY
+                }
+            }
+
+            ProductType.DISBURSEMENTS -> {
+                if (StringUtils.isNotBlank(io.rekast.sdk.BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY)) {
+                    BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY
+                } else {
+                    BuildConfig.MOMO_DISBURSEMENTS_SECONDARY_KEY
+                }
+            }
+        }
+        return productKey
     }
 }

@@ -151,9 +151,19 @@ object MomoConstants {
         const val GET_ACCESS_TOKEN = "/{productType}/token/"
 
         /**
+         * Endpoint for retrieving an access token.
+         */
+        const val GET_OAUTH2_ACCESS_TOKEN = "/{productType}/oauth2/token/"
+
+        /**
          * Endpoint for retrieving basic user information.
          */
         const val GET_BASIC_USER_INFO = "/{productType}/{apiVersion}/accountholder/msisdn/{accountHolderId}/basicuserinfo"
+
+        /**
+         * Endpoint for retrieving user information with consent.
+         */
+        const val GET_USER_INFO_WITH_CONSENT = "/{productType}/oauth2/{apiVersion}/userinfo"
 
         /**
          * Endpoint for retrieving account balance.
@@ -164,11 +174,6 @@ object MomoConstants {
          * Endpoint for retrieving account balance in a specific currency.
          */
         const val GET_ACCOUNT_BALANCE_IN_SPECIFIC_CURRENCY = "/{productType}/{apiVersion}/account/balance/{currency}"
-
-        /**
-         * Endpoint for retrieving user information with consent.
-         */
-        const val GET_USER_INFO_WITH_CONSENT = "/{productType}/oauth2/{apiVersion}/userinfo"
 
         /**
          * Endpoint for transferring funds.

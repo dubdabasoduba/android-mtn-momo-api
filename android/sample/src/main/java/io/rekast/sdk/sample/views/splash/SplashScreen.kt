@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,7 +50,7 @@ fun SplashScreen(
     }
 
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().size(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -57,7 +58,7 @@ fun SplashScreen(
             text = stringResource(R.string.app_name),
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            fontSize = 34.sp,
+            fontSize = 40.sp,
             modifier = modifier
                 .padding(vertical = 20.dp, horizontal = 20.dp)
                 .align(Alignment.CenterHorizontally)

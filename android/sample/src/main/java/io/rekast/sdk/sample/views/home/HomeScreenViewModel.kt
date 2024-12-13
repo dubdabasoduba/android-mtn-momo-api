@@ -59,7 +59,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun getBasicUserInfo() {
         showProgressBar.postValue(true)
-        val productType = settings.getProductSubscriptionKeys(ProductType.REMITTANCE)
+        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE)
 
         viewModelScope.launch(Dispatchers.IO) {
             if (StringUtils.isNotBlank(accessToken)) {
@@ -103,6 +103,46 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    fun getUserInfoWithConsent() {
+        showProgressBar.postValue(true)
+        val productType = Utils.getProductSubscriptionKeys(productType = ProductType.REMITTANCE)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            if (StringUtils.isNotBlank(accessToken)) {
+                defaultRepository.getUserInfoWithConsent(
+                    productType = ProductType.REMITTANCE.productType,
+                    apiVersion = BuildConfig.MOMO_API_VERSION_V1,
+                    productSubscriptionKey = productType,
+                    environment = BuildConfig.MOMO_ENVIRONMENT
+                ).collect { userInfoWithConsent ->
+                    when (userInfoWithConsent) {
+                        is NetworkResult.Success -> {
+                            Timber.d(userInfoWithConsent.response.toString())
+
+                            Timber.d("Basic user info with consent was fetched successfully")
+                            showProgressBar.postValue(false)
+                            emitSnackBarState(
+                                SnackBarComponentConfiguration(message = "Basic user info with consent was fetched successfully")
+                            )
+                        }
+
+                        is NetworkResult.Error -> {
+                            Timber.e("Basic user info with consent was not fetched %s", userInfoWithConsent.message)
+                            showProgressBar.postValue(false)
+
+                            val message = userInfoWithConsent.message
+                            emitSnackBarState(
+                                SnackBarComponentConfiguration(message = "Basic user info with consent was not fetched $message")
+                            )
+                        }
+
+                        is NetworkResult.Loading -> TODO()
+                    }
+                }
+            }
+        }
+    }
+
     fun validateAccountHolderStatus() {
         viewModelScope.launch(Dispatchers.IO) {
             showProgressBar.postValue(true)
@@ -115,7 +155,7 @@ class HomeScreenViewModel @Inject constructor(
                     productType = ProductType.REMITTANCE.productType,
                     apiVersion = BuildConfig.MOMO_API_VERSION_V1,
                     accountHolder = accountHolder,
-                    productSubscriptionKey = settings.getProductSubscriptionKeys(ProductType.REMITTANCE),
+                    productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE),
                     environment = BuildConfig.MOMO_ENVIRONMENT
                 ).collect { foundStatus ->
                     when (foundStatus) {
@@ -153,15 +193,18 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Only works with the Collection API
+     * */
     fun getAccountBalance() {
         viewModelScope.launch(Dispatchers.IO) {
             showProgressBar.postValue(true)
             if (StringUtils.isNotBlank(accessToken)) {
                 defaultRepository.getAccountBalance(
-                    productType = ProductType.DISBURSEMENTS.productType,
+                    productType = ProductType.COLLECTION.productType,
                     apiVersion = BuildConfig.MOMO_API_VERSION_V1,
                     currency = "",
-                    productSubscriptionKey = settings.getProductSubscriptionKeys(ProductType.COLLECTION),
+                    productSubscriptionKey = Utils.getProductSubscriptionKeys(ProductType.COLLECTION),
                     environment = BuildConfig.MOMO_ENVIRONMENT
                 ).collect { balance ->
                     when (balance) {

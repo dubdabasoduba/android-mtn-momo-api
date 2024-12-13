@@ -16,7 +16,6 @@
 package io.rekast.sdk.utils
 
 import com.google.gson.Gson
-import io.rekast.sdk.BuildConfig
 import io.rekast.sdk.model.MomoTransaction
 import java.util.*
 import javax.inject.Inject
@@ -74,49 +73,14 @@ class Settings @Inject constructor() {
     }
 
     /**
-     * Retrieves the product subscription keys based on the specified product
-     *
-     * @param productType The MTN MOMO API product type.
-     * @return The corresponding product key as a String.
-     */
-    fun getProductSubscriptionKeys(productType: ProductType): String {
-        val productKey: String = when (productType) {
-            ProductType.COLLECTION -> {
-                if ((StringUtils.isNotBlank(BuildConfig.MOMO_COLLECTION_PRIMARY_KEY))) {
-                    BuildConfig.MOMO_COLLECTION_PRIMARY_KEY
-                } else {
-                    BuildConfig.MOMO_COLLECTION_SECONDARY_KEY
-                }
-            }
-
-            ProductType.REMITTANCE -> {
-                if (StringUtils.isNotBlank(BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY)) {
-                    BuildConfig.MOMO_REMITTANCE_PRIMARY_KEY
-                } else {
-                    BuildConfig.MOMO_REMITTANCE_SECONDARY_KEY
-                }
-            }
-
-            ProductType.DISBURSEMENTS -> {
-                if (StringUtils.isNotBlank(BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY)) {
-                    BuildConfig.MOMO_DISBURSEMENTS_PRIMARY_KEY
-                } else {
-                    BuildConfig.MOMO_DISBURSEMENTS_SECONDARY_KEY
-                }
-            }
-        }
-        return productKey
-    }
-
-    /**
      * Generates a MomoTransaction object from the given response.
      *
      * @param response The response containing the transaction data.
      * @return A MomoTransaction object, or null if the response body is empty.
      */
     fun generateTransactionFromResponse(response: Response<ResponseBody?>): MomoTransaction? {
-        val data: String = response.body()!!.source().readUtf8()
-        return Gson().fromJson(data, MomoTransaction::class.java)
+        val responseData: String = response.body()!!.source().readUtf8()
+        return Gson().fromJson(responseData, MomoTransaction::class.java)
     }
 
     /**

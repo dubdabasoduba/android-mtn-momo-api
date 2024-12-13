@@ -19,6 +19,7 @@ import io.rekast.sdk.model.ProviderCallBackHost
 import io.rekast.sdk.model.authentication.AccessToken
 import io.rekast.sdk.model.authentication.ApiKey
 import io.rekast.sdk.model.authentication.ApiUser
+import io.rekast.sdk.model.authentication.Oauth2AccessToken
 import io.rekast.sdk.utils.MomoConstants
 import retrofit2.Response
 import retrofit2.http.Body
@@ -31,7 +32,7 @@ import retrofit2.http.Path
  * This interface defines the Retrofit service for handling various authentication-related API calls.
  *
  * It includes methods for creating API users, retrieving API user details, generating API keys,
- * and obtaining access tokens.
+ * and obtaining access tokens. Each method corresponds to a specific endpoint in the MTN MOMO API.
  */
 sealed interface AuthenticationService {
 
@@ -94,4 +95,19 @@ sealed interface AuthenticationService {
         @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String
     ): Response<AccessToken>
+
+    /**
+     * Obtains an OAuth2 access token for the specified product type.
+     *
+     * @param productType The type of product for which to obtain the OAuth2 access token.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The target environment (e.g., production, sandbox).
+     * @return A [Response] containing the obtained [Oauth2AccessToken].
+     */
+    @POST(MomoConstants.EndPoints.GET_OAUTH2_ACCESS_TOKEN)
+    suspend fun getOauth2AccessToken(
+        @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
+        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
+    ): Response<Oauth2AccessToken>
 }

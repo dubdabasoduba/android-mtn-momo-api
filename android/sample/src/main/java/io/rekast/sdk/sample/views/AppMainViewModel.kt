@@ -76,7 +76,7 @@ open class AppMainViewModel @Inject constructor(
      * This method checks if the API user exists and creates a new one if it does not.
      */
     fun checkUser() {
-        val productType = settings.getProductSubscriptionKeys(ProductType.COLLECTION)
+        val productType = Utils.getProductSubscriptionKeys(ProductType.COLLECTION)
         viewModelScope.launch(Dispatchers.IO) {
             defaultRepository.checkApiUser(BuildConfig.MOMO_API_VERSION_V1, productType).collect { apiUser ->
                 when (apiUser) {
@@ -104,7 +104,7 @@ open class AppMainViewModel @Inject constructor(
      * This method retrieves the API key for the user and sets up basic authentication.
      */
     private fun createApiKey() {
-        val productType = settings.getProductSubscriptionKeys(ProductType.REMITTANCE)
+        val productType = Utils.getProductSubscriptionKeys(ProductType.REMITTANCE)
         viewModelScope.launch(Dispatchers.IO) {
             val apiUserKey = this@AppMainViewModel.context.let { Utils.getApiKey(it) }
             if (StringUtils.isNotBlank(apiUserKey)) {
@@ -139,7 +139,7 @@ open class AppMainViewModel @Inject constructor(
      * This method checks if the access token is available and retrieves it if not.
      */
     private fun getAccessToken() {
-        val productType = settings.getProductSubscriptionKeys(productType = ProductType.REMITTANCE)
+        val productType = Utils.getProductSubscriptionKeys(productType = ProductType.REMITTANCE)
         viewModelScope.launch(Dispatchers.IO) {
             val apiUserKey = context.let { Utils.getApiKey(it) }
             val accessToken = context.let { Utils.getAccessToken(it) }
@@ -155,6 +155,7 @@ open class AppMainViewModel @Inject constructor(
                                     }
                                     this@AppMainViewModel.setBasicAuth("", "")
                                     Timber.d("Access token created and saved successfully")
+                                    getOauthAccessToken()
                                 } catch (exception: Exception) {
                                     Timber.e("An Error occurred %s", exception.message)
                                 }
@@ -170,7 +171,50 @@ open class AppMainViewModel @Inject constructor(
                 }
             } else {
                 this@AppMainViewModel.setBasicAuth("", "")
-                Timber.d("A valid access tokem was found")
+                Timber.d("A valid access token was found")
+                getOauthAccessToken()
+            }
+        }
+    }
+
+    /**
+     * Retrieves the Oauth access token for the user.
+     *
+     * This method checks if the access token is available and retrieves it if not.
+     */
+    private fun getOauthAccessToken() {
+        val productType = Utils.getProductSubscriptionKeys(productType = ProductType.COLLECTION)
+        viewModelScope.launch(Dispatchers.IO) {
+            val userAccessToken = context.let { Utils.getAccessToken(it) }
+            val userOauthAccessToken = context.let { Utils.getOauthAccessToken(it) }
+
+            if (StringUtils.isNotBlank(userAccessToken) && StringUtils.isBlank(userOauthAccessToken)) {
+                userAccessToken.let { accessToken ->
+                    defaultRepository.getOauthAccessToken(productType = ProductType.COLLECTION.productType, productSubscriptionKey = productType, environment = BuildConfig.MOMO_ENVIRONMENT).collect { oauthAccessToken ->
+                        when (oauthAccessToken) {
+                            is NetworkResult.Success -> {
+                                try {
+                                    context.let { activityContext ->
+                                        Utils.saveOauth2AccessToken(activityContext, oauthAccessToken.response)
+                                    }
+                                    Timber.d(" Oauth2 Access token created and saved successfully")
+                                } catch (exception: Exception) {
+                                    Timber.e("An Error occurred %s", exception.message)
+                                }
+                            }
+
+                            is NetworkResult.Error -> {
+                                Timber.e("Oauth2 Access token creation failed %s", oauthAccessToken.message)
+                            }
+
+                            else -> {
+                                Timber.e("Oauth2 Access token creation failed")
+                            }
+                        }
+                    }
+                }
+            } else {
+                Timber.d("A valid  Oauth2 access token was found")
             }
         }
     }
@@ -198,39 +242,6 @@ open class AppMainViewModel @Inject constructor(
             }
         }
     }
-
-
-        private fun getAccessToken() {
-            viewModelScope.launch {
-                val apiUserKey = context?.let { Utils.getApiKey(it) }
-                val accessToken = context?.let { Utils.getAccessToken(it) }
-                if (StringUtils.isNotBlank(apiUserKey) && StringUtils.isBlank(accessToken)) {
-                    apiUserKey?.let { apiKey ->
-                        defaultRepository.getAccessToken(
-                            Settings().getProductSubscriptionKeys(ProductType.REMITTANCE),
-                            apiKey,
-                            ProductType.REMITTANCE.productType
-                        ) { momoAPIResult ->
-                            when (momoAPIResult) {
-                                is MomoResponse.Success -> {
-                                    val generatedAccessToken = momoAPIResult.value
-                                    context?.let { activityContext ->
-                                        Utils.saveAccessToken(
-                                            activityContext,
-                                            generatedAccessToken
-                                        )
-                                    }
-                                }
-                                is MomoResponse.Failure -> {
-                                    val momoAPIException = momoAPIResult.momoException!!
-                                }
-                            }
-                        }
-                    }
-                } else {
-                }
-            }
-        }
 
     /**
      * Requests a refund for a transaction.
