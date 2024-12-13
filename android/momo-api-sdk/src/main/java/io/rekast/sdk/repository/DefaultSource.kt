@@ -46,7 +46,7 @@ class DefaultSource @Inject constructor(
      * @param apiVersion The version of the API to use.
      * @param uuid A unique identifier for the request.
      * @param productSubscriptionKey The subscription key for the product.
-     * @return A [Response] containing the created [ApiUser].
+     * @return A [Response] containing the created [io.rekast.sdk.model.authentication.ApiUser].
      */
     suspend fun createApiUser(
         providerCallBackHost: ProviderCallBackHost,
@@ -66,7 +66,7 @@ class DefaultSource @Inject constructor(
      * @param apiVersion The version of the API to use.
      * @param userId The ID of the API user to retrieve.
      * @param productSubscriptionKey The subscription key for the product.
-     * @return A [Response] containing the requested [ApiUser].
+     * @return A [Response] containing the requested [io.rekast.sdk.model.authentication.ApiUser].
      */
     suspend fun getApiUser(
         apiVersion: String,
@@ -84,7 +84,7 @@ class DefaultSource @Inject constructor(
      * @param apiVersion The version of the API to use.
      * @param userId The ID of the API user for whom to create the key.
      * @param productSubscriptionKey The subscription key for the product.
-     * @return A [Response] containing the generated [ApiKey].
+     * @return A [Response] containing the generated [io.rekast.sdk.model.authentication.ApiKey].
      */
     suspend fun createApiKey(
         apiVersion: String,
@@ -101,7 +101,7 @@ class DefaultSource @Inject constructor(
      *
      * @param productType The type of product for which to obtain the access token.
      * @param productSubscriptionKey The subscription key for the product.
-     * @return A [Response] containing the obtained [AccessToken].
+     * @return A [Response] containing the obtained [io.rekast.sdk.model.authentication.AccessToken].
      */
     suspend fun getAccessToken(
         productType: String,
@@ -112,6 +112,24 @@ class DefaultSource @Inject constructor(
     )
 
     /**
+     * Retrieves an OAuth2 access token for the specified product type.
+     *
+     * This function interacts with the authentication service to obtain an access token
+     * that can be used for subsequent API calls. The access token is essential for
+     * authenticating requests to the MTN MOMO API.
+     *
+     * @param productType The type of product for which to obtain the OAuth2 access token.
+     * @param productSubscriptionKey The subscription key for the product.
+     * @param environment The API environment (e.g., production, sandbox).
+     * @return A [Response] containing the obtained [io.rekast.sdk.model.authentication.Oauth2AccessToken].
+     */
+    suspend fun getOauth2AccessToken(productType: String, productSubscriptionKey: String, environment: String) = authenticationService.getOauth2AccessToken(
+        productType = productType,
+        productSubscriptionKey = productSubscriptionKey,
+        environment = environment
+    )
+
+    /**
      * Retrieves the basic user information for a specified MTN MOMO user.
      *
      * @param productType The type of product for which to retrieve the user information.
@@ -119,7 +137,7 @@ class DefaultSource @Inject constructor(
      * @param accountHolder The identifier for the account holder.
      * @param productSubscriptionKey The subscription key for the product.
      * @param environment The API environment (e.g., production, sandbox).
-     * @return A [Response] containing the [BasicUserInfo] of the specified user.
+     * @return A [Response] containing the [io.rekast.sdk.model.BasicUserInfo] of the specified user.
      */
     suspend fun getBasicUserInfo(
         productType: String,
@@ -167,7 +185,7 @@ class DefaultSource @Inject constructor(
      * @param apiVersion The version of the API to use.
      * @param productSubscriptionKey The subscription key for the product.
      * @param environment The API environment (e.g., production, sandbox).
-     * @return A [Response] containing the [AccountBalance].
+     * @return A [Response] containing the [io.rekast.sdk.model.AccountBalance].
      */
     suspend fun getAccountBalance(
         productType: String,
@@ -189,7 +207,7 @@ class DefaultSource @Inject constructor(
      * @param currency The currency for which to retrieve the account balance.
      * @param productSubscriptionKey The subscription key for the product.
      * @param environment The API environment (e.g., production, sandbox).
-     * @return A [Response] containing the [AccountBalance].
+     * @return A [Response] containing the [io.rekast.sdk.model.AccountBalance].
      */
     suspend fun getAccountBalanceInSpecificCurrency(
         productType: String,

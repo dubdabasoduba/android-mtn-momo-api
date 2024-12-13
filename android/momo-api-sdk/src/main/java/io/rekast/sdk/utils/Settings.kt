@@ -79,8 +79,8 @@ class Settings @Inject constructor() {
      * @return A MomoTransaction object, or null if the response body is empty.
      */
     fun generateTransactionFromResponse(response: Response<ResponseBody?>): MomoTransaction? {
-        val data: String = response.body()!!.source().readUtf8()
-        return Gson().fromJson(data, MomoTransaction::class.java)
+        val responseData: String = response.body()!!.source().readUtf8()
+        return Gson().fromJson(responseData, MomoTransaction::class.java)
     }
 
     /**

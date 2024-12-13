@@ -54,6 +54,23 @@ sealed interface CommonService {
     ): Response<BasicUserInfo>
 
     /**
+     * Makes a request to get the ApiUser Info with Consent.
+     *
+     * @param productType The API Products ([MomoConstants.ProductTypes]).
+     * @param apiVersion The app Version (e.g., v1_0 or v2_0).
+     * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
+     * @param environment The API environment (X-Target-Environment).
+     * @return A [Response] containing the [UserInfoWithConsent].
+     */
+    @GET(MomoConstants.EndPoints.GET_USER_INFO_WITH_CONSENT)
+    suspend fun getUserInfoWithConsent(
+        @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
+        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
+        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
+        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
+    ): Response<UserInfoWithConsent>
+
+    /**
      * Makes a request to check the account holder status.
      *
      * @param productType The API Products ([MomoConstants.ProductTypes]).
@@ -110,23 +127,6 @@ sealed interface CommonService {
         @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
         @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
     ): Response<AccountBalance>
-
-    /**
-     * Makes a request to get the ApiUser Info with Consent.
-     *
-     * @param productType The API Products ([MomoConstants.ProductTypes]).
-     * @param apiVersion The app Version (e.g., v1_0 or v2_0).
-     * @param productSubscriptionKey The Product subscription Key (Ocp-Apim-Subscription-Key).
-     * @param environment The API environment (X-Target-Environment).
-     * @return A [Response] containing the [UserInfoWithConsent].
-     */
-    @GET(MomoConstants.EndPoints.GET_USER_INFO_WITH_CONSENT)
-    suspend fun getUserInfoWithConsent(
-        @Path(MomoConstants.EndpointPaths.PRODUCT_TYPE) productType: String,
-        @Path(MomoConstants.EndpointPaths.API_VERSION) apiVersion: String,
-        @Header(MomoConstants.Headers.OCP_APIM_SUBSCRIPTION_KEY) productSubscriptionKey: String,
-        @Header(MomoConstants.Headers.X_TARGET_ENVIRONMENT) environment: String
-    ): Response<UserInfoWithConsent>
 
     /**
      * Makes a request to transfer funds.
